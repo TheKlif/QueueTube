@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Fetch channel feeds and merge them into data/queue.json."""
 import json
+import os
 import re
 import time
 import urllib.error
@@ -109,7 +110,12 @@ def main():
     queue = load("queue.json", {"generated_at": None, "videos": []})
     videos = {v["id"]: v for v in queue["videos"]}
     now = datetime.now(timezone.utc)
-    seeding = not videos
+    prune = os.environ.get("PRUNE_DAYS", "").strip()
+    if prune:
+        keep = now - timedelta(days=int(prune))
+        for vid in [i for i, v in videos.items()
+                    if (parse_time(v["published"]) or now) < keep]:
+            del videos[vid]
 
     still_pending = []
     for p in cfg.get("pending", []):
@@ -135,7 +141,7 @@ def main():
                 continue
             for e in entries:
                 v = videos.get(e["id"])
-                if v is None and seeding:
+                if v is None:
                     t = parse_time(e["published"])
                     if t is not None and t < now - timedelta(days=SEED_DAYS):
                         continue
