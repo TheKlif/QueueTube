@@ -89,6 +89,12 @@ def watch_flags(vid):
         m = re.search(rf'"{f}":(true|false)', body)
         out[f] = m.group(1) if m else "-"
     out["endTs"] = "y" if '"endTimestamp"' in body else "n"
+    out["len"] = len(body)
+    out["playerResp"] = "ytInitialPlayerResponse" in body
+    out["botcheck"] = any(s in body for s in
+                          ("not a bot", "LOGIN_REQUIRED", "unusual traffic"))
+    m = re.search(r"<title>(.*?)</title>", body, re.S)
+    out["title"] = m.group(1).strip()[:50] if m else None
     return out
 
 
