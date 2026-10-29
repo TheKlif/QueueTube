@@ -1,0 +1,525 @@
+{
+ "channels": [
+  {
+   "id": "UC-urXic2pl3Kroqy3kz9HPw",
+   "name": "ficcient",
+   "tier": 1,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC03onrqVhvdC44RhorJ4roQ",
+   "name": "Elyse Myers",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC0aSHiQNMy8IMmS7_8WbtdA",
+   "name": "FunkyFrogBait",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC0intLFzLaudFG-xAvUEO-A",
+   "name": "Not Just Bikes",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC127Qy2ulgASLYvW4AuHJZQ",
+   "name": "CGPGrey2",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC20LoHy2mX0LQODrkUalxVQ",
+   "name": "Donald Glover",
+   "tier": 7,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC2C_jShtL725hvbm1arSV9w",
+   "name": "CGP Grey",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC3KEoMzNz8eYnwBC34RaKCQ",
+   "name": "Simone Giertz",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC6G1JXzujoBrE7MC6mV-peQ",
+   "name": "William Maranci Mashups",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC7Qpmi4aKN22M5xkmVK_7KA",
+   "name": "Petey USA",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC7_mWPqK5zyoQASveSCuEYQ",
+   "name": "Call Me Gram",
+   "tier": 1,
+   "shorts": "badge",
+   "live": "badge",
+   "muted": false
+  },
+  {
+   "id": "UC9CuvdOVfMPvKCiwdGKL3cQ",
+   "name": "GameGrumps",
+   "tier": 2,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UC9RM-iSvTu1uPJb8X5yp3EQ",
+   "name": "Wendover Productions",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCAL3JXZSzSm8AlZyD3nQdBA",
+   "name": "Primitive Technology",
+   "tier": 7,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCDrJor35jYVnuC3JgRzheIw",
+   "name": "Neil Cicierega",
+   "tier": 4,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCEMj2h7pP4QWkoGnSmaiiYw",
+   "name": "The Plant Slant",
+   "tier": 4,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCEOXxzW2vU0P-0THehuIIeg",
+   "name": "Captain Disillusion",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCEUPx_RbHwadQ6AwDBiiAFg",
+   "name": "There I Ruined It",
+   "tier": 3,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCEXF5-KL8DU7HMwza-9UY7A",
+   "name": "Dropout Presents",
+   "tier": 4,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCEtB-nx5ngoNJWEzYa-yXBg",
+   "name": "FilmJoy",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCFu_7pxU3-CByq7bxjVuE4Q",
+   "name": "Dallas Taylor",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCGEkvEO_z3ncFPOeTIIf-TQ",
+   "name": "clipping.",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCGaO3wLV8_N1YFbMOtuaYqw",
+   "name": "Dimension 20 Shorts",
+   "tier": 7,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCJ2ZDzMRgSrxmwphstrm8Ww",
+   "name": "Smosh Games",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCJLKwTg0IaSMoq6hLHT3CAA",
+   "name": "Ordinary Sausage",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCKoQPVYSFJt5HFvyKzkFtNg",
+   "name": "Regulation Gameplay",
+   "tier": 1,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCMu5gPmKp5av0QCAajKTMhw",
+   "name": "ERB",
+   "tier": 4,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCOT2iLov0V7Re7ku_3UBtcQ",
+   "name": "Hank Green",
+   "tier": 7,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCOZnlN6M4FVIm0_fbrEjUYQ",
+   "name": "josemonkey",
+   "tier": 5,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCP5tjEmvPItGyLhmjdwP7Ww",
+   "name": "RealLifeLore",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCPP6JksBPYY3MeFQn5yanIw",
+   "name": "Regulation Podcast",
+   "tier": 1,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCQMyhrt92_8XM0KgZH6VnRg",
+   "name": "Company Man",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCR5toEFbaBy_ekPxnyk-49Q",
+   "name": "Guy Montgomery",
+   "tier": 7,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCRWoMiD1_jS26qscGMCY63w",
+   "name": "obviousplant",
+   "tier": 5,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCSuT9FSddzI6W5Bij9XwtmA",
+   "name": "Internet Shaquille",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCT5C7yaO3RVuOgwP8JVAujQ",
+   "name": "Taskmaster",
+   "tier": 2,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCTcw8GqWQlFcc6ioeJQOMAQ",
+   "name": "Game Changer Shorts",
+   "tier": 4,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCUK0HBIBWgM2c4vsPhkYY4w",
+   "name": "The Slow Mo Guys",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCXgxNzAgZ1GExhTW4X1mUrg",
+   "name": "Marc Rebillet",
+   "tier": 5,
+   "shorts": "bdage",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCXjmz8dFzRJZrZY8eFiXNUQ",
+   "name": "Nerdstalgic",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCXq2nALoSbxLMehAvYTxt_A",
+   "name": "The Grumps",
+   "tier": 2,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCdbetV_5wxUnBTdb_d51qoA",
+   "name": "Synthet",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCekQr9znsk2vWxBo3YiLq2w",
+   "name": "You Suck At Cooking",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCfMJ2MchTSW2kWaT0kK94Yw",
+   "name": "William Osman",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCigygyPkHm07o-wQvkET7Og",
+   "name": "George Collier",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCkMZEzIwMl1DUhE1XPmHwKg",
+   "name": "Five Iron Frenzy",
+   "tier": 3,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UClMuJ-LqVoH3e_5xZa_rfuw",
+   "name": "Pooja Tripathi",
+   "tier": 5,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UClRwC5Vc8HrB6vGx6Ti-lhA",
+   "name": "Technology Connextras",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCnZx--LpG2spgmlxOcC-DRA",
+   "name": "Daniel Thrasher",
+   "tier": 5,
+   "shorts": "badge",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCnsQ9vg8jnB-EHxOipiOlOQ",
+   "name": "sidneyraz",
+   "tier": 7,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCq6aw03lNILzV96UvEAASfQ",
+   "name": "bill wurtz",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCqqJQ_cXSat0KIAVfIfKkVA",
+   "name": "J. Kenji López-Alt",
+   "tier": 7,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCrQieQckb9Fw9-SD7BdkpjQ",
+   "name": "HAWPOfficial",
+   "tier": 1,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCs7yDP7KWrh0wd_4qbDP32g",
+   "name": "Ninja Sex Party",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCsXVk37bltHxD1rDPwtNM8Q",
+   "name": "Kurzgesagt – In a Nutshell",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCsvn_Po0SmunchJYOWpOxMg",
+   "name": "videogamedunkey",
+   "tier": 4,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCtGicLkT8fW5wipn2Ko3CdA",
+   "name": "Ekaterina",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCtUbO6rBht0daVIOGML3c8w",
+   "name": "Summoning Salt",
+   "tier": 4,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCuCkxoKLYO_EQ2GeFtbM_bw",
+   "name": "Half as Interesting",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCutM8N36VPTTFJgwEC2_LFw",
+   "name": "Derby Date Night",
+   "tier": 7,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCx9l0FfNQ3G79_9SBxkhR9g",
+   "name": "Taskmaster International",
+   "tier": 2,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCxC7i8o5gFBz7_c9RUGjyrg",
+   "name": "AreYouKiddingTV",
+   "tier": 4,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCxsQFG_8Dbt1sZhLReL2mUw",
+   "name": "Nerd City",
+   "tier": 3,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCy0tKL1T7wFoYcxCe0xjN6Q",
+   "name": "Technology Connections",
+   "tier": 2,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCyWDmyZRjrGHeKF-ofFsT5Q",
+   "name": "Internet Comment Etiquette with Erik",
+   "tier": 5,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  }
+ ],
+ "pending": []
+}

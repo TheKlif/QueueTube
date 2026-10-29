@@ -14,6 +14,7 @@ NS = {"a": "http://www.w3.org/2005/Atom",
       "yt": "http://www.youtube.com/xml/schemas/2015"}
 UA = "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"
 PREFIXES = ["UU", "UULF", "UUSH", "UULV"]
+VIDEOS = []
 LETTER = {"UU": "A", "UULF": "L", "UUSH": "S", "UULV": "V"}
 FLAGS = ["isLiveContent", "isUpcoming", "isLive", "isLiveNow"]
 
@@ -124,6 +125,11 @@ def probe(cid, n, watch):
         for e in feeds[p]:
             rec = merged.setdefault(e["id"], dict(e, src=set()))
             rec["src"].add(LETTER[p])
+    for v in VIDEOS:
+        if v in merged:
+            r = merged[v]
+            print(f"  TRACKED {v} src={''.join(sorted(r['src']))} "
+                  f"published={r['published']} title={r['title'][:50]!r}")
     latest = sorted(merged.values(), key=lambda r: r["published"], reverse=True)[:n]
 
     print(f"  latest {len(latest)} unique videos "
@@ -141,6 +147,7 @@ def probe(cid, n, watch):
     print("  UULV entries (all):")
     for e in feeds["UULV"]:
         print(f"    {e['id']} {e['published'][:16]} {e['title'][:50]!r}")
+    return ids
 
 
 def main():
@@ -150,9 +157,8 @@ def main():
     ap.add_argument("--no-watch", action="store_true")
     ap.add_argument("--video", action="append", default=[])
     args = ap.parse_args()
-    for v in args.video:
-        print(f"\n== video {v}")
-        print(f"  shorts={short_status(v)} watch={watch_flags(v)}")
+    VIDEOS.extend(args.video)
+    seen = {p: set() for p in PREFIXES}
     for arg in args.channels:
         print(f"\n== {arg}")
         cid = resolve(arg)
@@ -160,7 +166,12 @@ def main():
             print("  could not resolve a channel ID")
             continue
         print(f"  channel id: {cid}")
-        probe(cid, args.n, not args.no_watch)
+        ids = probe(cid, args.n, not args.no_watch)
+        for p in PREFIXES:
+            seen[p] |= ids[p]
+    for v in args.video:
+        print(f"\n== feed membership of {v}: "
+              + str({p: v in seen[p] for p in PREFIXES}))
 
 
 if __name__ == "__main__":
