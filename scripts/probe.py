@@ -91,8 +91,12 @@ def watch_flags(vid):
     out["endTs"] = "y" if '"endTimestamp"' in body else "n"
     out["len"] = len(body)
     out["playerResp"] = "ytInitialPlayerResponse" in body
-    out["botcheck"] = any(s in body for s in
-                          ("not a bot", "LOGIN_REQUIRED", "unusual traffic"))
+    m = re.search(r'"playabilityStatus":\{"status":"(\w+)"(?:,"reason":"([^"]*)")?', body)
+    out["playability"] = m.group(1) if m else None
+    out["reason"] = (m.group(2) or "")[:60] if m else None
+    out["sorry"] = "unusual traffic" in body
+    for f in ("upcomingEventData", "liveBroadcastDetails"):
+        out[f] = f'"{f}"' in body
     m = re.search(r"<title>(.*?)</title>", body, re.S)
     out["title"] = m.group(1).strip()[:50] if m else None
     return out
@@ -141,10 +145,14 @@ def probe(cid, n, watch):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("channels", nargs="+")
+    ap.add_argument("channels", nargs="*")
     ap.add_argument("--n", type=int, default=8)
     ap.add_argument("--no-watch", action="store_true")
+    ap.add_argument("--video", action="append", default=[])
     args = ap.parse_args()
+    for v in args.video:
+        print(f"\n== video {v}")
+        print(f"  shorts={short_status(v)} watch={watch_flags(v)}")
     for arg in args.channels:
         print(f"\n== {arg}")
         cid = resolve(arg)
