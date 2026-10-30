@@ -92,6 +92,7 @@ const OWNER = location.hostname.split(".")[0];
 const REPO = location.pathname.split("/")[1] || "";
 const FILE_URL = API + "/repos/" + OWNER + "/" + REPO + "/contents/" + STATE_PATH;
 const $ = (s) => document.querySelector(s);
+const NEW_TAB = window.matchMedia("(pointer: fine)").matches;
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } }
@@ -320,6 +321,7 @@ function row(v) {
   const a = el("a", "main");
   a.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(v.id);
   a.rel = "noopener noreferrer";
+  if (NEW_TAB) a.target = "_blank";
   a.onclick = (e) => {
     if (cb) { e.preventDefault(); toggle(v.id, cb, !cb.checked); return; }
     if (view === "queue" && tapMarks) {
