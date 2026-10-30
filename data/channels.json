@@ -521,5 +521,10 @@
    "muted": false
   }
  ],
- "pending": []
+ "pending": [
+  {
+   "input": "@grump",
+   "tier": 9
+  }
+ ]
 }
