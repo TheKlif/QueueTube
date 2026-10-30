@@ -15,8 +15,8 @@ body{background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,-apple-system,
 header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(.5rem + env(safe-area-inset-top,0px)) .8rem .5rem;z-index:5}
 .top{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
 h1{font-size:1.1rem;margin:0}
-#updated{font-size:.8rem;color:var(--muted)}
-#updated.stale{color:var(--warn);font-weight:600}
+.status{font-size:.8rem;color:var(--muted);text-align:right}
+.stale{color:var(--warn);font-weight:600}
 nav,#bar{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.5rem}
 .sp{flex:1}
 button,select,input[type=date]{font:inherit;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:.4rem;padding:.35rem .7rem;min-height:44px}
@@ -31,6 +31,12 @@ ul{list-style:none;margin:0;padding:0}
 .row input[type=checkbox]{width:1.4rem;height:1.4rem;flex:none}
 .check{min-width:44px;font-size:1.2rem}
 #empty{padding:2rem;text-align:center;color:var(--muted)}
+#settings{padding:.8rem;border-bottom:1px solid var(--line)}
+#settings h2{font-size:1rem;margin:0 0 .5rem}
+#settings p{margin:.4rem 0;font-size:.85rem;color:var(--muted)}
+#settings label{display:flex;gap:.5rem;align-items:center;margin:.4rem 0}
+#tok{flex:1;min-width:0;font:inherit;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:.4rem;padding:.35rem .7rem;min-height:44px}
+code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1rem + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:.4rem .4rem .4rem 1rem;border-radius:.5rem;display:flex;align-items:center;gap:.8rem;z-index:10}
 #toast button{background:transparent;color:var(--bg);border-color:var(--bg)}
 @media (min-width:700px){.row img{width:168px}}
@@ -38,7 +44,10 @@ ul{list-style:none;margin:0;padding:0}
 </head>
 <body>
 <header>
-  <div class="top"><h1>QueueTube</h1><span id="updated"></span></div>
+  <div class="top">
+    <h1>QueueTube</h1>
+    <div class="status"><span id="sync"></span> · <span id="updated"></span></div>
+  </div>
   <nav>
     <button id="tab-queue" class="tab on">Queue</button>
     <button id="tab-watched" class="tab">Watched</button>
@@ -46,6 +55,7 @@ ul{list-style:none;margin:0;padding:0}
     <button id="sort"></button>
     <button id="select">Select</button>
     <button id="refresh">Refresh</button>
+    <button id="settingsbtn">Settings</button>
   </nav>
   <div id="bar" hidden>
     <span id="count">0 selected</span>
@@ -55,6 +65,17 @@ ul{list-style:none;margin:0;padding:0}
     <label>Older than <input type="date" id="olderdate"></label>
   </div>
 </header>
+<section id="settings" hidden>
+  <h2>Settings</h2>
+  <label><input type="checkbox" id="tapmarks"> Tapping a video marks it watched</label>
+  <p>Sync target: <code id="slug"></code>, branch <code>state</code>. Needs a fine-grained token with Contents read and write on this repo only.</p>
+  <label>Token <input type="password" id="tok" autocomplete="off" placeholder="paste token"></label>
+  <div>
+    <button id="tokSave">Save and test</button>
+    <button id="tokClear">Remove token</button>
+  </div>
+  <p id="settingsMsg"></p>
+</section>
 <main>
   <ul id="list"></ul>
   <p id="empty" hidden></p>
@@ -64,15 +85,37 @@ ul{list-style:none;margin:0;padding:0}
 "use strict";
 const DATA_BASE = "data/";
 const STALE_HOURS = 6;
+const API = "https://api.github.com";
+const STATE_BRANCH = "state";
+const STATE_PATH = "watched.json";
+const OWNER = location.hostname.split(".")[0];
+const REPO = location.pathname.split("/")[1] || "";
+const FILE_URL = API + "/repos/" + OWNER + "/" + REPO + "/contents/" + STATE_PATH;
 const $ = (s) => document.querySelector(s);
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } }
 };
-let watched = store.get("qt.watched", {});
+
+function loadState() {
+  let s = store.get("qt.state", null);
+  if (s) return s;
+  s = {};
+  const old = store.get("qt.watched", {});
+  for (const id in old) s[id] = { t: old[id], w: 1 };
+  store.set("qt.state", s);
+  return s;
+}
+
+let state = loadState();
+let token = store.get("qt.token", "");
+let tapMarks = store.get("qt.tapMarks", true);
 let newestFirst = store.get("qt.newestFirst", false);
 let view = "queue", selectMode = false, selected = new Set();
 let queue = null, chans = new Map(), toastTimer;
+let remoteSha = null, rev = 0, lastPull = 0, pushTimer = null, busy = false;
+
+const isWatched = (id) => !!(state[id] && state[id].w);
 
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -80,6 +123,117 @@ function el(tag, cls, text) {
   if (text !== undefined) e.textContent = text;
   return e;
 }
+
+function setStatus(s, msg) {
+  const names = { local: "Local only", idle: "", pending: "Unsaved", saving: "Saving…",
+                  syncing: "Syncing…", synced: "Synced", error: "Sync error" };
+  const e = $("#sync");
+  e.textContent = (names[s] || s) + (msg ? ": " + msg : "");
+  e.className = s === "error" ? "stale" : "";
+}
+
+/* ---------- sync ---------- */
+
+function mergeInto(remote) {
+  let changed = false;
+  for (const id in remote) {
+    const r = remote[id], l = state[id];
+    if (!l || r.t > l.t) { state[id] = r; changed = true; }
+  }
+  if (changed) store.set("qt.state", state);
+  return changed;
+}
+
+function gh(method, url, body) {
+  const headers = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json" };
+  if (body) headers["Content-Type"] = "application/json";
+  return fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
+}
+
+async function pullRemote() {
+  const r = await gh("GET", FILE_URL + "?ref=" + STATE_BRANCH);
+  if (r.status === 404) {
+    const j = await r.json().catch(() => ({}));
+    if (/ref/i.test(j.message || "")) throw new Error("branch " + STATE_BRANCH + " not found");
+    remoteSha = null;
+    return;
+  }
+  if (r.status === 401) throw new Error("token rejected");
+  if (!r.ok) throw new Error("GitHub " + r.status);
+  const j = await r.json();
+  remoteSha = j.sha;
+  const data = JSON.parse(atob(j.content.replace(/\s/g, "")));
+  mergeInto(data.items || {});
+}
+
+async function pushRemote() {
+  for (let i = 0; i < 3; i++) {
+    await pullRemote();
+    const body = {
+      message: "watched state",
+      content: btoa(JSON.stringify({ v: 1, items: state })),
+      branch: STATE_BRANCH
+    };
+    if (remoteSha) body.sha = remoteSha;
+    const r = await gh("PUT", FILE_URL, body);
+    if (r.ok) { remoteSha = (await r.json()).content.sha; return; }
+    if (r.status !== 409 && r.status !== 422) throw new Error("GitHub " + r.status);
+  }
+  throw new Error("conflict, will retry");
+}
+
+async function flush() {
+  if (!token || busy || !store.get("qt.dirty", false)) return;
+  busy = true;
+  const start = rev;
+  setStatus("saving");
+  try {
+    await pushRemote();
+    if (rev === start) store.set("qt.dirty", false);
+    lastPull = Date.now();
+    setStatus("synced");
+    render();
+  } catch (e) {
+    setStatus("error", e.message);
+  }
+  busy = false;
+  if (rev !== start && store.get("qt.dirty", false)) schedule();
+}
+
+function schedule() {
+  if (!token) return;
+  setStatus("pending");
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(flush, 2000);
+}
+
+async function sync(force) {
+  if (!token || busy) return;
+  if (store.get("qt.dirty", false)) { await flush(); return; }
+  if (!force && Date.now() - lastPull < 15000) return;
+  busy = true;
+  setStatus("syncing");
+  try {
+    await pullRemote();
+    lastPull = Date.now();
+    setStatus("synced");
+    render();
+  } catch (e) {
+    setStatus("error", e.message);
+  }
+  busy = false;
+}
+
+function setW(ids, w) {
+  const now = Date.now();
+  ids.forEach((id) => { state[id] = { t: now, w: w }; });
+  store.set("qt.state", state);
+  rev++;
+  store.set("qt.dirty", true);
+  schedule();
+}
+
+/* ---------- data ---------- */
 
 async function load() {
   const names = ["queue.json", "channels.json"];
@@ -99,7 +253,7 @@ function ago(iso) {
 
 function visible() {
   return queue.videos.filter((v) => {
-    if (v.state !== "ready" || watched[v.id]) return false;
+    if (v.state !== "ready" || isWatched(v.id)) return false;
     const ch = chans.get(v.channel_id);
     if (!ch || ch.muted) return false;
     if (v.kind === "short" && ch.shorts !== "badge") return false;
@@ -114,8 +268,10 @@ function visible() {
 }
 
 function watchedItems() {
-  return queue.videos.filter((v) => watched[v.id]).sort((a, b) => watched[b.id] - watched[a.id]);
+  return queue.videos.filter((v) => isWatched(v.id)).sort((a, b) => state[b.id].t - state[a.id].t);
 }
+
+/* ---------- ui ---------- */
 
 function toast(msg, undo) {
   const t = $("#toast");
@@ -131,21 +287,23 @@ function toast(msg, undo) {
 }
 
 function markWatched(ids) {
-  const now = Date.now();
-  ids.forEach((id) => { watched[id] = now; });
-  store.set("qt.watched", watched);
+  setW(ids, 1);
   render();
   toast(ids.length + (ids.length === 1 ? " video" : " videos") + " marked watched", () => {
-    ids.forEach((id) => { delete watched[id]; });
-    store.set("qt.watched", watched);
+    setW(ids, 0);
     render();
   });
 }
 
 function unwatch(id) {
-  delete watched[id];
-  store.set("qt.watched", watched);
+  setW([id], 0);
   render();
+}
+
+function toggle(id, cb, on) {
+  if (on) selected.add(id); else selected.delete(id);
+  cb.checked = on;
+  $("#count").textContent = selected.size + " selected";
 }
 
 function row(v) {
@@ -163,7 +321,11 @@ function row(v) {
   a.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(v.id);
   a.rel = "noopener noreferrer";
   a.onclick = (e) => {
-    if (cb) { e.preventDefault(); toggle(v.id, cb, !cb.checked); }
+    if (cb) { e.preventDefault(); toggle(v.id, cb, !cb.checked); return; }
+    if (view === "queue" && tapMarks) {
+      setW([v.id], 1);
+      setTimeout(render, 150);
+    }
   };
   const img = el("img");
   img.src = "https://i.ytimg.com/vi/" + encodeURIComponent(v.id) + "/mqdefault.jpg";
@@ -187,12 +349,6 @@ function row(v) {
   return li;
 }
 
-function toggle(id, cb, on) {
-  if (on) selected.add(id); else selected.delete(id);
-  cb.checked = on;
-  $("#count").textContent = selected.size + " selected";
-}
-
 function buildBar(items) {
   const bar = $("#bar");
   bar.hidden = !(selectMode && view === "queue");
@@ -210,7 +366,6 @@ function render() {
   const q = visible();
   const items = view === "queue" ? q : watchedItems();
   $("#tab-queue").textContent = "Queue (" + q.length + ")";
-  $("#tab-watched").textContent = "Watched";
   $("#tab-queue").classList.toggle("on", view === "queue");
   $("#tab-watched").classList.toggle("on", view === "watched");
   $("#sort").textContent = newestFirst ? "Newest first" : "Oldest first";
@@ -221,8 +376,7 @@ function render() {
   u.textContent = "Updated " + (mins < 60 ? mins + " min" : Math.round(mins / 60) + " h") + " ago";
   u.className = mins > STALE_HOURS * 60 ? "stale" : "";
   buildBar(q);
-  const list = $("#list");
-  list.replaceChildren(...items.map(row));
+  $("#list").replaceChildren(...items.map(row));
   const empty = $("#empty");
   empty.hidden = items.length > 0;
   empty.textContent = view === "queue" ? "Nothing to watch." : "Nothing watched yet.";
@@ -232,6 +386,8 @@ function selectWhere(fn) {
   visible().filter(fn).forEach((v) => selected.add(v.id));
   render();
 }
+
+/* ---------- events ---------- */
 
 $("#tab-queue").onclick = () => { view = "queue"; render(); };
 $("#tab-watched").onclick = () => { view = "watched"; selectMode = false; selected.clear(); render(); };
@@ -255,13 +411,51 @@ $("#markbtn").onclick = () => {
   markWatched(ids);
 };
 $("#refresh").onclick = async () => {
-  try { await load(); render(); } catch (e) { toast("Refresh failed: " + e.message); }
+  try { await load(); render(); await sync(true); } catch (e) { toast("Refresh failed: " + e.message); }
 };
 
+$("#settingsbtn").onclick = () => { $("#settings").hidden = !$("#settings").hidden; };
+$("#tapmarks").checked = tapMarks;
+$("#tapmarks").onchange = (e) => { tapMarks = e.target.checked; store.set("qt.tapMarks", tapMarks); };
+$("#slug").textContent = OWNER + "/" + REPO;
+$("#tokSave").onclick = async () => {
+  const v = $("#tok").value.trim();
+  const msg = $("#settingsMsg");
+  if (!v) return;
+  const previous = token;
+  token = v;
+  msg.textContent = "Testing…";
+  try {
+    await pullRemote();
+    store.set("qt.token", token);
+    store.set("qt.dirty", true);
+    rev++;
+    $("#tok").value = "";
+    await flush();
+    msg.textContent = store.get("qt.dirty", false) ? "Token saved, but the first sync failed." : "Connected and synced.";
+    render();
+  } catch (e) {
+    token = previous;
+    msg.textContent = "Failed: " + e.message;
+  }
+};
+$("#tokClear").onclick = () => {
+  token = "";
+  store.set("qt.token", "");
+  setStatus("local");
+  $("#settingsMsg").textContent = "Token removed. Watched state stays on this device only.";
+};
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") sync(false); else flush();
+});
+
+setStatus(token ? "idle" : "local");
 load().then(render).catch((e) => {
   $("#empty").hidden = false;
   $("#empty").textContent = "Could not load data: " + e.message;
 });
+sync(true);
 </script>
 </body>
 </html>
