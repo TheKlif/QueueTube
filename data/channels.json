@@ -204,7 +204,7 @@
    "id": "UCKoQPVYSFJt5HFvyKzkFtNg",
    "name": "Regulation Gameplay",
    "tier": 1,
-   "shorts": "hide",
+   "shorts": "badge",
    "live": "hide",
    "muted": false
   },
@@ -244,7 +244,7 @@
    "id": "UCPP6JksBPYY3MeFQn5yanIw",
    "name": "Regulation Podcast",
    "tier": 1,
-   "shorts": "hide",
+   "shorts": "badge",
    "live": "hide",
    "muted": false
   },
