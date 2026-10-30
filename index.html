@@ -37,8 +37,19 @@ ul{list-style:none;margin:0;padding:0}
 #settings h2{font-size:1rem;margin:0 0 .5rem}
 #settings p{margin:.4rem 0;font-size:.85rem;color:var(--muted)}
 #settings label{display:flex;gap:.5rem;align-items:center;margin:.4rem 0}
-#tok,#addin{flex:1;min-width:0;font:inherit;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:.4rem;padding:.35rem .7rem;min-height:44px}
+#tok,#addin,#chin,#chfilter{flex:1;min-width:0;font:inherit;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:.4rem;padding:.35rem .7rem;min-height:44px}
 code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
+#chpanel{padding:.6rem .8rem;border-bottom:1px solid var(--line)}
+#chadd{display:flex;gap:.4rem;flex-wrap:wrap}
+#chinfo{font-size:.85rem;color:var(--muted);margin:.4rem 0}
+#pendlist li{font-size:.85rem;color:var(--muted)}
+#chfilter{width:100%;margin-top:.4rem}
+.chrow{padding:.6rem .8rem;border-bottom:1px solid var(--line)}
+.chname{font-weight:600;margin-bottom:.3rem;overflow-wrap:anywhere}
+.chctl{display:flex;flex-wrap:wrap;gap:.5rem .9rem;align-items:center}
+.chctl label{display:flex;gap:.3rem;align-items:center;font-size:.85rem;color:var(--muted)}
+.chctl select{min-height:40px}
+.chctl input[type=checkbox]{width:1.2rem;height:1.2rem}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1rem + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:.4rem .4rem .4rem 1rem;border-radius:.5rem;display:flex;align-items:center;gap:.8rem;z-index:10}
 #toast button{background:transparent;color:var(--bg);border-color:var(--bg)}
 @media (min-width:700px){.row img{width:168px}}
@@ -54,6 +65,7 @@ code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
     <button id="tab-queue" class="tab on">Queue</button>
     <button id="tab-later" class="tab">Later</button>
     <button id="tab-watched" class="tab">Watched</button>
+    <button id="tab-channels" class="tab">Channels</button>
     <span class="sp"></span>
     <button id="sort"></button>
     <button id="select">Select</button>
@@ -83,6 +95,16 @@ code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
   </div>
   <p id="settingsMsg"></p>
 </section>
+<section id="chpanel" hidden>
+  <div id="chadd">
+    <input id="chin" type="text" placeholder="@handle, channel link, or UC id" autocomplete="off">
+    <select id="chtier" aria-label="Tier for new channel"></select>
+    <button id="chaddbtn">Add channel</button>
+  </div>
+  <div id="chinfo"></div>
+  <ul id="pendlist"></ul>
+  <input id="chfilter" type="text" placeholder="Filter channels" autocomplete="off">
+</section>
 <main>
   <p id="note" hidden></p>
   <ul id="list"></ul>
@@ -98,7 +120,9 @@ const STATE_BRANCH = "state";
 const STATE_PATH = "watched.json";
 const OWNER = location.hostname.split(".")[0];
 const REPO = location.pathname.split("/")[1] || "";
-const FILE_URL = API + "/repos/" + OWNER + "/" + REPO + "/contents/" + STATE_PATH;
+const REPO_API = API + "/repos/" + OWNER + "/" + REPO + "/contents/";
+const FILE_URL = REPO_API + STATE_PATH;
+const CH_URL = REPO_API + "data/channels.json";
 const $ = (s) => document.querySelector(s);
 const NEW_TAB = window.matchMedia("(pointer: fine)").matches;
 const store = {
@@ -126,9 +150,14 @@ let queue = null, chans = new Map(), toastTimer;
 let remoteSha = null, rev = 0, lastPull = 0, pushTimer = null, busy = false;
 let metaFailed = false;
 const metaTried = new Set();
+let chPatch = store.get("qt.chPatch", {});
+let chAdd = store.get("qt.chAdd", []);
+let pendingList = [], chOrder = [];
+let chRev = 0, chBusy = false, chTimer = null, chMsg = "", chBad = false;
 
 const isWatched = (id) => !!(state[id] && state[id].w);
 const dateOf = (v) => Date.parse(v.published || v.added);
+const hasChPending = () => Object.keys(chPatch).length > 0 || chAdd.length > 0;
 
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -349,15 +378,210 @@ function laterItems() {
   });
 }
 
+/* ---------- channels ---------- */
+
+async function loadChannels() {
+  if (token) {
+    try {
+      const r = await gh("GET", CH_URL + "?t=" + Date.now());
+      if (r.ok) return JSON.parse(b64dec((await r.json()).content));
+    } catch (e) { /* fall back to Pages */ }
+  }
+  const r = await fetch(DATA_BASE + "channels.json?t=" + Date.now(), { cache: "no-store" });
+  if (!r.ok) throw new Error("channels.json " + r.status);
+  return r.json();
+}
+
+function sortChannels() {
+  chOrder = [...chans.values()].sort((a, b) =>
+    ((a.tier ?? 99) - (b.tier ?? 99)) || (a.name || "").localeCompare(b.name || "")).map((c) => c.id);
+}
+
+function channelItems() {
+  const f = $("#chfilter").value.trim().toLowerCase();
+  return chOrder.map((id) => chans.get(id))
+    .filter((ch) => ch && (!f || (ch.name || ch.id).toLowerCase().includes(f)));
+}
+
+function setChMsg(text, bad) {
+  chMsg = text;
+  chBad = !!bad;
+  if (view === "channels") renderChPanel();
+}
+
+function scheduleCh() {
+  if (!token) return;
+  setChMsg("Unsaved");
+  clearTimeout(chTimer);
+  chTimer = setTimeout(saveChannels, 4000);
+}
+
+function applyPatch(cfg, patch, adds) {
+  for (const ch of cfg.channels) {
+    const p = patch[ch.id];
+    if (p) Object.assign(ch, p);
+  }
+  cfg.pending = cfg.pending || [];
+  adds.forEach((a) => {
+    const key = a.input.toLowerCase();
+    const known = cfg.channels.some((c) => c.id === a.input) ||
+      cfg.pending.some((p) => p.input.toLowerCase() === key);
+    if (!known) cfg.pending.push({ input: a.input, tier: a.tier });
+  });
+}
+
+async function saveChannels() {
+  if (!token || !hasChPending()) return;
+  if (chBusy) { scheduleCh(); return; }
+  chBusy = true;
+  const start = chRev;
+  const patch = JSON.parse(JSON.stringify(chPatch));
+  const adds = chAdd.slice();
+  setChMsg("Saving…");
+  try {
+    let saved = null;
+    for (let i = 0; i < 3 && !saved; i++) {
+      const r = await gh("GET", CH_URL + "?t=" + Date.now());
+      if (r.status === 401) throw new Error("token rejected");
+      if (!r.ok) throw new Error("GitHub " + r.status);
+      const j = await r.json();
+      const cfg = JSON.parse(b64dec(j.content));
+      applyPatch(cfg, patch, adds);
+      const put = await gh("PUT", CH_URL, {
+        message: "channel settings",
+        content: b64enc(JSON.stringify(cfg, null, 1) + "\n"),
+        sha: j.sha
+      });
+      if (put.ok) saved = cfg;
+      else if (put.status !== 409 && put.status !== 422) throw new Error("GitHub " + put.status);
+    }
+    if (!saved) throw new Error("conflict, will retry");
+    pendingList = saved.pending || [];
+    if (chRev === start) {
+      chPatch = {};
+      chAdd = [];
+      store.set("qt.chPatch", chPatch);
+      store.set("qt.chAdd", chAdd);
+      setChMsg("Saved");
+    } else {
+      scheduleCh();
+    }
+  } catch (e) {
+    setChMsg("Save failed: " + e.message, true);
+  }
+  chBusy = false;
+  render();
+}
+
+function setCh(id, key, val) {
+  const ch = chans.get(id);
+  if (!ch) return;
+  ch[key] = val;
+  (chPatch[id] = chPatch[id] || {})[key] = val;
+  store.set("qt.chPatch", chPatch);
+  chRev++;
+  scheduleCh();
+  updateCounts();
+}
+
+function parseChannelInput(text) {
+  const t = String(text || "").trim();
+  if (!t) return null;
+  if (/^UC[\w-]{22}$/.test(t)) return t;
+  let m = t.match(/youtube\.com\/channel\/(UC[\w-]{22})/i);
+  if (m) return m[1];
+  m = t.match(/youtube\.com\/(@[\w.%-]+)/i);
+  if (m) return decodeURIComponent(m[1]);
+  if (/^@?[\w.%-]+$/.test(t)) return t.startsWith("@") ? t : "@" + t;
+  return null;
+}
+
+function addChannel() {
+  if (!token) { toast("Add a token in Settings first"); return; }
+  const input = parseChannelInput($("#chin").value);
+  if (!input) { toast("Enter a @handle, channel link, or UC id"); return; }
+  const tier = Number($("#chtier").value);
+  store.set("qt.addTier", tier);
+  const key = input.toLowerCase();
+  const known = chans.has(input) ||
+    pendingList.some((p) => p.input.toLowerCase() === key) ||
+    chAdd.some((p) => p.input.toLowerCase() === key);
+  if (known) { toast("Already added"); return; }
+  chAdd.push({ input: input, tier: tier });
+  store.set("qt.chAdd", chAdd);
+  $("#chin").value = "";
+  chRev++;
+  scheduleCh();
+  render();
+}
+
+const TIERS = Array.from({ length: 10 }, (_, i) => [String(i + 1), String(i + 1)]);
+const HIDE_BADGE = [["hide", "Hide"], ["badge", "Badge"]];
+
+function field(label, opts, value, onchange) {
+  const lab = el("label", null, label);
+  const s = el("select");
+  opts.forEach(([v, t]) => s.append(new Option(t, v)));
+  s.value = String(value);
+  s.disabled = !token;
+  s.onchange = () => onchange(s.value);
+  lab.append(s);
+  return lab;
+}
+
+function chRow(ch) {
+  const li = el("li", "chrow");
+  li.append(el("div", "chname", ch.name || ch.id));
+  const ctl = el("div", "chctl");
+  ctl.append(
+    field("Tier", TIERS, ch.tier ?? 9, (v) => setCh(ch.id, "tier", Number(v))),
+    field("Shorts", HIDE_BADGE, ch.shorts || "hide", (v) => setCh(ch.id, "shorts", v)),
+    field("Live VODs", HIDE_BADGE, ch.live || "hide", (v) => setCh(ch.id, "live", v))
+  );
+  const lab = el("label", null, "Muted");
+  const cb = el("input");
+  cb.type = "checkbox";
+  cb.checked = !!ch.muted;
+  cb.disabled = !token;
+  cb.onchange = () => setCh(ch.id, "muted", cb.checked);
+  lab.prepend(cb);
+  ctl.append(lab);
+  li.append(ctl);
+  return li;
+}
+
+function renderChPanel() {
+  const info = $("#chinfo");
+  info.textContent = token ? chMsg : "Add a token in Settings to edit channels.";
+  info.className = chBad ? "stale" : "";
+  ["#chin", "#chtier", "#chaddbtn"].forEach((s) => { $(s).disabled = !token; });
+  const seen = new Set();
+  const pend = pendingList.concat(chAdd).filter((p) => {
+    const k = p.input.toLowerCase();
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+  $("#pendlist").replaceChildren(...pend.map((p) =>
+    el("li", null, "Pending: " + p.input + " (tier " + p.tier + ")")));
+}
+
 /* ---------- data ---------- */
 
 async function load() {
-  const names = ["queue.json", "channels.json"];
-  const [q, c] = await Promise.all(names.map((n) =>
-    fetch(DATA_BASE + n + "?t=" + Date.now(), { cache: "no-store" })
-      .then((r) => { if (!r.ok) throw new Error(n + " " + r.status); return r.json(); })));
+  const [q, c] = await Promise.all([
+    fetch(DATA_BASE + "queue.json?t=" + Date.now(), { cache: "no-store" })
+      .then((r) => { if (!r.ok) throw new Error("queue.json " + r.status); return r.json(); }),
+    loadChannels()
+  ]);
   queue = q;
   chans = new Map(c.channels.map((ch) => [ch.id, ch]));
+  pendingList = c.pending || [];
+  for (const id in chPatch) {
+    const ch = chans.get(id);
+    if (ch) Object.assign(ch, chPatch[id]);
+  }
+  sortChannels();
 }
 
 function ago(iso) {
@@ -435,7 +659,7 @@ function row(v) {
   const ch = chans.get(v.channel_id);
   const li = el("li", "row");
   let cb = null;
-  if (selectMode && view !== "watched") {
+  if (selectMode && (view === "queue" || view === "later")) {
     cb = el("input");
     cb.type = "checkbox";
     cb.checked = selected.has(v.id);
@@ -483,7 +707,7 @@ function row(v) {
 
 function buildBar(items) {
   const bar = $("#bar");
-  bar.hidden = !(selectMode && view !== "watched");
+  bar.hidden = !(selectMode && (view === "queue" || view === "later"));
   if (bar.hidden) return;
   $("#count").textContent = selected.size + " selected";
   const sel = $("#chsel");
@@ -495,32 +719,42 @@ function buildBar(items) {
   [...names].sort((a, b) => a[1].localeCompare(b[1])).forEach(([id, n]) => sel.append(new Option(n, id)));
 }
 
+function updateCounts() {
+  if (!queue) return;
+  $("#tab-queue").textContent = "Queue (" + visible().length + ")";
+  $("#tab-later").textContent = "Later (" + laterItems().length + ")";
+}
+
 function render() {
   if (!queue) return;
-  const q = visible(), l = laterItems();
-  const items = view === "queue" ? q : view === "later" ? l : watchedItems();
-  $("#tab-queue").textContent = "Queue (" + q.length + ")";
-  $("#tab-later").textContent = "Later (" + l.length + ")";
-  $("#tab-queue").classList.toggle("on", view === "queue");
-  $("#tab-later").classList.toggle("on", view === "later");
-  $("#tab-watched").classList.toggle("on", view === "watched");
+  updateCounts();
+  ["queue", "later", "watched", "channels"].forEach((v) =>
+    $("#tab-" + v).classList.toggle("on", view === v));
   $("#sort").textContent = newestFirst ? "Newest first" : "Oldest first";
+  $("#sort").hidden = view === "channels";
   $("#select").textContent = selectMode ? "Cancel" : "Select";
-  $("#select").hidden = view === "watched";
+  $("#select").hidden = view === "watched" || view === "channels";
   $("#addbar").hidden = view !== "later";
+  $("#chpanel").hidden = view !== "channels";
+  let items, mapper = row;
+  if (view === "queue") items = visible();
+  else if (view === "later") items = laterItems();
+  else if (view === "watched") items = watchedItems();
+  else { items = channelItems(); mapper = chRow; renderChPanel(); }
   const note = $("#note");
-  note.hidden = !(view === "later" && metaFailed && l.some((v) => !later[v.id].title));
+  note.hidden = !(view === "later" && metaFailed && items.some((v) => !later[v.id].title));
   note.textContent = "Titles could not be fetched (the browser blocked the lookup).";
   const mins = Math.round((Date.now() - Date.parse(queue.generated_at)) / 60000);
   const u = $("#updated");
   u.textContent = "Updated " + (mins < 60 ? mins + " min" : Math.round(mins / 60) + " h") + " ago";
   u.className = mins > STALE_HOURS * 60 ? "stale" : "";
   buildBar(items);
-  $("#list").replaceChildren(...items.map(row));
+  $("#list").replaceChildren(...items.map(mapper));
   const empty = $("#empty");
   empty.hidden = items.length > 0;
   empty.textContent = view === "queue" ? "Nothing to watch."
-    : view === "later" ? "Watch Later is empty." : "Nothing watched yet.";
+    : view === "later" ? "Watch Later is empty."
+    : view === "channels" ? "No matching channels." : "Nothing watched yet.";
 }
 
 function selectWhere(fn) {
@@ -532,6 +766,7 @@ function setView(v) {
   view = v;
   selectMode = false;
   selected.clear();
+  if (v === "channels") sortChannels();
   render();
 }
 
@@ -540,6 +775,7 @@ function setView(v) {
 $("#tab-queue").onclick = () => setView("queue");
 $("#tab-later").onclick = () => setView("later");
 $("#tab-watched").onclick = () => setView("watched");
+$("#tab-channels").onclick = () => setView("channels");
 $("#sort").onclick = () => { newestFirst = !newestFirst; store.set("qt.newestFirst", newestFirst); render(); };
 $("#select").onclick = () => { selectMode = !selectMode; selected.clear(); render(); };
 $("#selall").onclick = () => selectWhere(() => true);
@@ -566,6 +802,12 @@ $("#refresh").onclick = async () => {
 $("#addbtn").onclick = () => { if (addLater($("#addin").value)) $("#addin").value = ""; };
 $("#addin").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#addbtn").click(); });
 
+$("#chaddbtn").onclick = addChannel;
+$("#chin").addEventListener("keydown", (e) => { if (e.key === "Enter") addChannel(); });
+$("#chfilter").oninput = render;
+TIERS.forEach(([v, t]) => $("#chtier").append(new Option(t, v)));
+$("#chtier").value = String(store.get("qt.addTier", 9));
+
 $("#settingsbtn").onclick = () => { $("#settings").hidden = !$("#settings").hidden; };
 $("#tapmarks").checked = tapMarks;
 $("#tapmarks").onchange = (e) => { tapMarks = e.target.checked; store.set("qt.tapMarks", tapMarks); };
@@ -585,6 +827,8 @@ $("#tokSave").onclick = async () => {
     $("#tok").value = "";
     await flush();
     msg.textContent = store.get("qt.dirty", false) ? "Token saved, but the first sync failed." : "Connected and synced.";
+    try { await load(); } catch (e) { /* keep current data */ }
+    if (hasChPending()) scheduleCh();
     render();
   } catch (e) {
     token = previous;
@@ -596,10 +840,12 @@ $("#tokClear").onclick = () => {
   store.set("qt.token", "");
   setStatus("local");
   $("#settingsMsg").textContent = "Token removed. Watched state stays on this device only.";
+  render();
 };
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") sync(false); else flush();
+  if (document.visibilityState === "visible") sync(false);
+  else { flush(); saveChannels(); }
 });
 
 /* ---------- startup ---------- */
@@ -621,6 +867,7 @@ if (startAdd) {
   await sync(true);
   if (startAdd) addLater(startAdd);
   fillMeta();
+  if (hasChPending()) scheduleCh();
 })();
 </script>
 </body>
