@@ -1,6 +1,24 @@
 {
- "generated_at": "2026-10-30T18:38:35+00:00",
+ "generated_at": "2026-10-30T22:59:53+00:00",
  "videos": [
+  {
+   "id": "s6liqS8PTF8",
+   "channel_id": "UCqqJQ_cXSat0KIAVfIfKkVA",
+   "published": "2026-10-30T21:33:29+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T22:59:53+00:00",
+   "title": "Braised Kabocha Squash Season!",
+   "kind": "short"
+  },
+  {
+   "id": "S5OLw0j7iTc",
+   "channel_id": "UCx9l0FfNQ3G79_9SBxkhR9g",
+   "published": "2026-10-30T19:00:15+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T22:59:53+00:00",
+   "title": "Taskmaster Portugal Season 1, Episode 3 - 'Tinha tantos sonhos...'",
+   "kind": "video"
+  },
   {
    "id": "FPg1UL0RNnA",
    "channel_id": "UCuCkxoKLYO_EQ2GeFtbM_bw",
@@ -16,7 +34,7 @@
    "published": "2026-10-30T17:35:51+00:00",
    "state": "ready",
    "first_seen": "2026-10-30T18:38:35+00:00",
-   "title": "Alkaline batteries are obsolete — but their predecessor isn't",
+   "title": "Alkaline batteries are obsolete — but not for the reason you'd think",
    "kind": "video"
   },
   {
@@ -61,7 +79,7 @@
    "published": "2026-10-30T16:00:28+00:00",
    "state": "ready",
    "first_seen": "2026-10-30T18:38:35+00:00",
-   "title": "How Movie Stunts Tell Stories Without Saying A Word",
+   "title": "These Stunts Told A MUCH Bigger Story",
    "kind": "video"
   },
   {
@@ -232,7 +250,7 @@
    "published": "2026-10-29T18:20:35+00:00",
    "state": "ready",
    "first_seen": "2026-10-29T18:30:09+00:00",
-   "title": "I Was Wrong About Fiber",
+   "title": "Why is Everyone Still Wrong about Fiber???",
    "kind": "video"
   },
   {
@@ -376,7 +394,7 @@
    "published": "2026-10-28T17:49:09+00:00",
    "state": "ready",
    "first_seen": "2026-10-29T11:48:11+00:00",
-   "title": "What the Hell is Going On with RFK Jr.",
+   "title": "RFK Jr's Mask is Slipping",
    "kind": "video"
   },
   {
