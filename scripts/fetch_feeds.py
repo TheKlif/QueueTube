@@ -152,6 +152,7 @@ def main():
                     videos[e["id"]] = v
                     new_ids.append(e["id"])
                 v["title"] = e["title"]
+                v["published"] = e["published"]
                 # Do not let a general feed overwrite a short or vod tag.
                 if kind != "video" or v.get("kind") not in ("short", "vod"):
                     v["kind"] = kind

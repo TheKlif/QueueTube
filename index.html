@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QueueTube</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%BA%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#fff;--fg:#1a1a1a;--muted:#666;--line:#ddd;--accent:#0b57d0;--warn:#b26a00;--chip:#eee}
+@media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#eaeaea;--muted:#9a9a9a;--line:#2e2e2e;--accent:#8ab4f8;--warn:#f0b04a;--chip:#2a2a2a;color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;max-width:900px;margin:0 auto;padding:0 0 5rem}
+header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(.5rem + env(safe-area-inset-top,0px)) .8rem .5rem;z-index:5}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+h1{font-size:1.1rem;margin:0}
+#updated{font-size:.8rem;color:var(--muted)}
+#updated.stale{color:var(--warn);font-weight:600}
+nav,#bar{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.5rem}
+.sp{flex:1}
+button,select,input[type=date]{font:inherit;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:.4rem;padding:.35rem .7rem;min-height:44px}
+button.tab.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+ul{list-style:none;margin:0;padding:0}
+.row{display:flex;gap:.6rem;align-items:center;padding:.5rem .8rem;border-bottom:1px solid var(--line)}
+.row .main{display:flex;gap:.6rem;flex:1;min-width:0;color:inherit;text-decoration:none}
+.row img{width:120px;aspect-ratio:16/9;object-fit:cover;background:var(--chip);border-radius:.3rem;flex:none}
+.title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:500}
+.meta{font-size:.85rem;color:var(--muted);margin-top:.15rem}
+.badge{border:1px solid var(--muted);border-radius:.25rem;padding:0 .3rem;font-size:.7rem;margin-left:.3rem}
+.row input[type=checkbox]{width:1.4rem;height:1.4rem;flex:none}
+.check{min-width:44px;font-size:1.2rem}
+#empty{padding:2rem;text-align:center;color:var(--muted)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1rem + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:.4rem .4rem .4rem 1rem;border-radius:.5rem;display:flex;align-items:center;gap:.8rem;z-index:10}
+#toast button{background:transparent;color:var(--bg);border-color:var(--bg)}
+@media (min-width:700px){.row img{width:168px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><h1>QueueTube</h1><span id="updated"></span></div>
+  <nav>
+    <button id="tab-queue" class="tab on">Queue</button>
+    <button id="tab-watched" class="tab">Watched</button>
+    <span class="sp"></span>
+    <button id="sort"></button>
+    <button id="select">Select</button>
+    <button id="refresh">Refresh</button>
+  </nav>
+  <div id="bar" hidden>
+    <span id="count">0 selected</span>
+    <button id="markbtn">Mark watched</button>
+    <button id="selall">Select all</button>
+    <select id="chsel"></select>
+    <label>Older than <input type="date" id="olderdate"></label>
+  </div>
+</header>
+<main>
+  <ul id="list"></ul>
+  <p id="empty" hidden></p>
+</main>
+<div id="toast" hidden></div>
+<script>
+"use strict";
+const DATA_BASE = "data/";
+const STALE_HOURS = 6;
+const $ = (s) => document.querySelector(s);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } }
+};
+let watched = store.get("qt.watched", {});
+let newestFirst = store.get("qt.newestFirst", false);
+let view = "queue", selectMode = false, selected = new Set();
+let queue = null, chans = new Map(), toastTimer;
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+async function load() {
+  const names = ["queue.json", "channels.json"];
+  const [q, c] = await Promise.all(names.map((n) =>
+    fetch(DATA_BASE + n + "?t=" + Date.now(), { cache: "no-store" })
+      .then((r) => { if (!r.ok) throw new Error(n + " " + r.status); return r.json(); })));
+  queue = q;
+  chans = new Map(c.channels.map((ch) => [ch.id, ch]));
+}
+
+function ago(iso) {
+  const s = (Date.now() - Date.parse(iso)) / 1000;
+  if (s < 3600) return Math.max(1, Math.round(s / 60)) + "m ago";
+  if (s < 86400) return Math.round(s / 3600) + "h ago";
+  return Math.round(s / 86400) + "d ago";
+}
+
+function visible() {
+  return queue.videos.filter((v) => {
+    if (v.state !== "ready" || watched[v.id]) return false;
+    const ch = chans.get(v.channel_id);
+    if (!ch || ch.muted) return false;
+    if (v.kind === "short" && ch.shorts !== "badge") return false;
+    if (v.kind === "vod" && ch.live !== "badge") return false;
+    return true;
+  }).sort((a, b) => {
+    const ta = chans.get(a.channel_id).tier ?? 99, tb = chans.get(b.channel_id).tier ?? 99;
+    if (ta !== tb) return ta - tb;
+    const d = Date.parse(a.published) - Date.parse(b.published);
+    return newestFirst ? -d : d;
+  });
+}
+
+function watchedItems() {
+  return queue.videos.filter((v) => watched[v.id]).sort((a, b) => watched[b.id] - watched[a.id]);
+}
+
+function toast(msg, undo) {
+  const t = $("#toast");
+  t.replaceChildren(el("span", null, msg));
+  if (undo) {
+    const b = el("button", null, "Undo");
+    b.onclick = () => { undo(); t.hidden = true; };
+    t.append(b);
+  }
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 6000);
+}
+
+function markWatched(ids) {
+  const now = Date.now();
+  ids.forEach((id) => { watched[id] = now; });
+  store.set("qt.watched", watched);
+  render();
+  toast(ids.length + (ids.length === 1 ? " video" : " videos") + " marked watched", () => {
+    ids.forEach((id) => { delete watched[id]; });
+    store.set("qt.watched", watched);
+    render();
+  });
+}
+
+function unwatch(id) {
+  delete watched[id];
+  store.set("qt.watched", watched);
+  render();
+}
+
+function row(v) {
+  const ch = chans.get(v.channel_id);
+  const li = el("li", "row");
+  let cb = null;
+  if (selectMode && view === "queue") {
+    cb = el("input");
+    cb.type = "checkbox";
+    cb.checked = selected.has(v.id);
+    cb.onchange = () => toggle(v.id, cb, cb.checked);
+    li.append(cb);
+  }
+  const a = el("a", "main");
+  a.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(v.id);
+  a.rel = "noopener noreferrer";
+  a.onclick = (e) => {
+    if (cb) { e.preventDefault(); toggle(v.id, cb, !cb.checked); }
+  };
+  const img = el("img");
+  img.src = "https://i.ytimg.com/vi/" + encodeURIComponent(v.id) + "/mqdefault.jpg";
+  img.alt = "";
+  img.loading = "lazy";
+  img.referrerPolicy = "no-referrer";
+  const text = el("div");
+  text.append(el("div", "title", v.title));
+  const meta = el("div", "meta", (ch ? ch.name : "") + " · " + ago(v.published));
+  if (v.kind === "short") meta.append(el("span", "badge", "SHORT"));
+  if (v.kind === "vod") meta.append(el("span", "badge", "VOD"));
+  text.append(meta);
+  a.append(img, text);
+  li.append(a);
+  if (!cb) {
+    const b = el("button", "check", view === "queue" ? "✓" : "Unwatch");
+    b.setAttribute("aria-label", view === "queue" ? "Mark watched" : "Unwatch");
+    b.onclick = () => (view === "queue" ? markWatched([v.id]) : unwatch(v.id));
+    li.append(b);
+  }
+  return li;
+}
+
+function toggle(id, cb, on) {
+  if (on) selected.add(id); else selected.delete(id);
+  cb.checked = on;
+  $("#count").textContent = selected.size + " selected";
+}
+
+function buildBar(items) {
+  const bar = $("#bar");
+  bar.hidden = !(selectMode && view === "queue");
+  if (bar.hidden) return;
+  $("#count").textContent = selected.size + " selected";
+  const names = new Map();
+  items.forEach((v) => names.set(v.channel_id, chans.get(v.channel_id).name || v.channel_id));
+  const sel = $("#chsel");
+  sel.replaceChildren(new Option("Select channel…", ""));
+  [...names].sort((a, b) => a[1].localeCompare(b[1])).forEach(([id, n]) => sel.append(new Option(n, id)));
+}
+
+function render() {
+  if (!queue) return;
+  const q = visible();
+  const items = view === "queue" ? q : watchedItems();
+  $("#tab-queue").textContent = "Queue (" + q.length + ")";
+  $("#tab-watched").textContent = "Watched";
+  $("#tab-queue").classList.toggle("on", view === "queue");
+  $("#tab-watched").classList.toggle("on", view === "watched");
+  $("#sort").textContent = newestFirst ? "Newest first" : "Oldest first";
+  $("#select").textContent = selectMode ? "Cancel" : "Select";
+  $("#select").hidden = view !== "queue";
+  const mins = Math.round((Date.now() - Date.parse(queue.generated_at)) / 60000);
+  const u = $("#updated");
+  u.textContent = "Updated " + (mins < 60 ? mins + " min" : Math.round(mins / 60) + " h") + " ago";
+  u.className = mins > STALE_HOURS * 60 ? "stale" : "";
+  buildBar(q);
+  const list = $("#list");
+  list.replaceChildren(...items.map(row));
+  const empty = $("#empty");
+  empty.hidden = items.length > 0;
+  empty.textContent = view === "queue" ? "Nothing to watch." : "Nothing watched yet.";
+}
+
+function selectWhere(fn) {
+  visible().filter(fn).forEach((v) => selected.add(v.id));
+  render();
+}
+
+$("#tab-queue").onclick = () => { view = "queue"; render(); };
+$("#tab-watched").onclick = () => { view = "watched"; selectMode = false; selected.clear(); render(); };
+$("#sort").onclick = () => { newestFirst = !newestFirst; store.set("qt.newestFirst", newestFirst); render(); };
+$("#select").onclick = () => { selectMode = !selectMode; selected.clear(); render(); };
+$("#selall").onclick = () => selectWhere(() => true);
+$("#chsel").onchange = (e) => { if (e.target.value) selectWhere((v) => v.channel_id === e.target.value); };
+$("#olderdate").onchange = (e) => {
+  if (!e.target.value) return;
+  const cutoff = new Date(e.target.value + "T00:00:00").getTime();
+  selectWhere((v) => Date.parse(v.published) < cutoff);
+  e.target.value = "";
+};
+$("#markbtn").onclick = () => {
+  const n = selected.size;
+  if (!n) return;
+  if (n >= 10 && !confirm("Mark " + n + " videos as watched?")) return;
+  const ids = [...selected];
+  selected.clear();
+  selectMode = false;
+  markWatched(ids);
+};
+$("#refresh").onclick = async () => {
+  try { await load(); render(); } catch (e) { toast("Refresh failed: " + e.message); }
+};
+
+load().then(render).catch((e) => {
+  $("#empty").hidden = false;
+  $("#empty").textContent = "Could not load data: " + e.message;
+});
+</script>
+</body>
+</html>
