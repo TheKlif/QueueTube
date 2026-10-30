@@ -1,6 +1,96 @@
 {
- "generated_at": "2026-10-30T05:53:16+00:00",
+ "generated_at": "2026-10-30T12:59:31+00:00",
  "videos": [
+  {
+   "id": "bDFKDZhlsII",
+   "channel_id": "UCPP6JksBPYY3MeFQn5yanIw",
+   "published": "2026-10-30T13:00:37+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "Pillow Menu - Break Show",
+   "kind": "video"
+  },
+  {
+   "id": "7zYLNd_MvNQ",
+   "channel_id": "UCT5C7yaO3RVuOgwP8JVAujQ",
+   "published": "2026-10-30T11:37:01+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "Every day's a school day, Joel. #taskmaster",
+   "kind": "short"
+  },
+  {
+   "id": "MXe6bGU-EEw",
+   "channel_id": "UCKoQPVYSFJt5HFvyKzkFtNg",
+   "published": "2026-10-30T00:28:14+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "A raccoon eulogy",
+   "kind": "short"
+  },
+  {
+   "id": "a-jb1SDO6Wg",
+   "channel_id": "UCT5C7yaO3RVuOgwP8JVAujQ",
+   "published": "2026-10-29T22:50:33+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "'Some people like worse.' JOEL DOMMETT on Season 22, Episode 9 | PODCAST",
+   "kind": "video"
+  },
+  {
+   "id": "huXXoO0k8aQ",
+   "channel_id": "UCT5C7yaO3RVuOgwP8JVAujQ",
+   "published": "2026-10-29T22:00:10+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-29T11:48:11+00:00",
+   "title": "Taskmaster Season 22, Episode 9 - 'A very televisual torso.' | Full Episode",
+   "kind": "video"
+  },
+  {
+   "id": "qS32mRXvl4s",
+   "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
+   "published": "2026-10-29T21:37:07+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "#hallpasspartner I’m gonna need a lifetime supply of those sticks 😋 #hallpass #candyreview",
+   "kind": "short"
+  },
+  {
+   "id": "gcapGQAaIcM",
+   "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
+   "published": "2026-10-29T20:19:34+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "@Chatnchops Had to adjust the normal way I make dal but still really good! #cheapmeal #budgetmeal",
+   "kind": "short"
+  },
+  {
+   "id": "XFTeoYFS4D8",
+   "channel_id": "UCx9l0FfNQ3G79_9SBxkhR9g",
+   "published": "2026-10-29T19:00:39+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "Taskmaster Portugal Season 1, Episode 2 - 'Symmetry is fundamental.'",
+   "kind": "video"
+  },
+  {
+   "id": "N9X9tJo6q6E",
+   "channel_id": "UCXq2nALoSbxLMehAvYTxt_A",
+   "published": "2026-10-29T19:00:32+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "STOP. GO! ANSWER ME!",
+   "kind": "short"
+  },
+  {
+   "id": "yazvNx-tZrc",
+   "channel_id": "UCJ2ZDzMRgSrxmwphstrm8Ww",
+   "published": "2026-10-29T19:00:21+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "HEAR HER OUT",
+   "kind": "short"
+  },
   {
    "id": "40LcIZKsp18",
    "channel_id": "UCP5tjEmvPItGyLhmjdwP7Ww",
@@ -497,15 +587,6 @@
    "kind": "video"
   },
   {
-   "id": "huXXoO0k8aQ",
-   "channel_id": "UCT5C7yaO3RVuOgwP8JVAujQ",
-   "published": "2026-10-26T15:52:08+00:00",
-   "state": "ready",
-   "first_seen": "2026-10-29T11:48:11+00:00",
-   "title": "Taskmaster Season 22, Episode 9 - 'A very televisual torso.' | Full Episode",
-   "kind": "video"
-  },
-  {
    "id": "o7eUZUGhKkY",
    "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
    "published": "2026-10-26T03:18:06+00:00",
@@ -576,6 +657,15 @@
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "Inside NASCAR’s Live Radio Mix",
    "kind": "short"
+  },
+  {
+   "id": "py3RqRPhiUs",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-25T14:08:41+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "If Settle The Score rehauled had an everyone section",
+   "kind": "video"
   },
   {
    "id": "gj3-C8WHIQE",
@@ -1532,6 +1622,24 @@
    "kind": "short"
   },
   {
+   "id": "6Jc_nZJxN-8",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-18T15:05:37+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "CRITICAL FAILURE - dave and bambi fantrack",
+   "kind": "video"
+  },
+  {
+   "id": "Pu90O7QIMMA",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-18T15:05:30+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "[jokw\\e] ֆքǟʍʄʊʟռɛֆֆ - dave and bambi spamtrack",
+   "kind": "video"
+  },
+  {
    "id": "3mY2DJk8xJI",
    "channel_id": "UCKoQPVYSFJt5HFvyKzkFtNg",
    "published": "2026-10-18T04:37:34+00:00",
@@ -1602,6 +1710,15 @@
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "The Art of Folding Clothes ✨",
    "kind": "short"
+  },
+  {
+   "id": "bHaZpIefCAk",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-17T14:32:10+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "PARANOIA // segment 4",
+   "kind": "video"
   },
   {
    "id": "J-6ufJ1hEZc",
@@ -2205,6 +2322,15 @@
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "One small catch... #taskmaster #taskmasterNL",
    "kind": "short"
+  },
+  {
+   "id": "DtpW70I8BII",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-12T00:35:25+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "TREASON // section 1",
+   "kind": "video"
   },
   {
    "id": "oC6aWTPaj_g",
@@ -2936,6 +3062,15 @@
    "kind": "short"
   },
   {
+   "id": "vLo94YIFVUw",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-04T15:50:03+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "[JOKE + EPILEPSY] ₩Ⱨ₳₮ ł ₳₥ ₣ɆɆⱠł₦₲ ł₴ ฿ɆɎØ₦Đ ₱₳ł₦₣ɄⱠ - Dave and Bambi fantrack",
+   "kind": "video"
+  },
+  {
    "id": "Y9Tl12QmZyY",
    "channel_id": "UCKoQPVYSFJt5HFvyKzkFtNg",
    "published": "2026-10-04T01:04:12+00:00",
@@ -2979,6 +3114,15 @@
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "This the exact opposite of what she wanted",
    "kind": "short"
+  },
+  {
+   "id": "GUFiXF_tMb8",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-03T17:13:13+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "PSEUDOANTHROPY - Dave and Bambi Fantrack [read desc]",
+   "kind": "video"
   },
   {
    "id": "drR35lMUX0Y",
@@ -3095,6 +3239,15 @@
    "state": "ready",
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "Get Out of Greg Free Idol - Break Show",
+   "kind": "video"
+  },
+  {
+   "id": "OFT7G-7oZpU",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-02T02:12:03+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "RADIATE (V2) - Dave and Bambi fantrack",
    "kind": "video"
   },
   {
@@ -3548,6 +3701,15 @@
    "kind": "video"
   },
   {
+   "id": "SKESmgh2_tw",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-09-27T14:31:09+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "WORMHOLE (V2) - Dave and Bambi Fantrack",
+   "kind": "video"
+  },
+  {
    "id": "nc_mDPeTkzQ",
    "channel_id": "UCPP6JksBPYY3MeFQn5yanIw",
    "published": "2026-09-27T13:00:29+00:00",
@@ -3608,6 +3770,15 @@
    "state": "ready",
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "RV There Yet? 2",
+   "kind": "video"
+  },
+  {
+   "id": "hBNq-sUADk8",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-09-25T22:11:20+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "📼CASSETTE // CASCADE 📼 //// Celeste fantrack",
    "kind": "video"
   },
   {
@@ -3971,6 +4142,15 @@
    "kind": "video"
   },
   {
+   "id": "gmQsKkSO3As",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-09-20T17:44:21+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "PARANOIA // segment 3",
+   "kind": "video"
+  },
+  {
    "id": "mNyMENS_zFU",
    "channel_id": "UCJ2ZDzMRgSrxmwphstrm8Ww",
    "published": "2026-09-20T17:00:37+00:00",
@@ -4023,6 +4203,15 @@
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "Pittsburg(h)",
    "kind": "short"
+  },
+  {
+   "id": "6tyzQKx0wjQ",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-09-19T18:02:05+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "PARANOIA // segment 2",
+   "kind": "video"
   },
   {
    "id": "cbR2k7LTLNg",
@@ -4187,6 +4376,15 @@
    "kind": "short"
   },
   {
+   "id": "_AQvs8G6uSk",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-09-16T00:15:13+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "DEMIURGE Remix // Section 5: {CLIMAX}",
+   "kind": "video"
+  },
+  {
    "id": "M7Ytw-FYnLY",
    "channel_id": "UC9CuvdOVfMPvKCiwdGKL3cQ",
    "published": "2026-09-15T19:57:46+00:00",
@@ -4247,6 +4445,15 @@
    "state": "ready",
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "This Woman Cured Her Cancer with an Insane Method",
+   "kind": "video"
+  },
+  {
+   "id": "05eKNfVqfIw",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-09-15T00:43:02+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "DEMIURGE Remix // Section 4: HOLY LIGHT",
    "kind": "video"
   },
   {
@@ -4319,6 +4526,15 @@
    "state": "ready",
    "first_seen": "2026-10-29T11:48:11+00:00",
    "title": "We Play Pretty Pretty Princess",
+   "kind": "video"
+  },
+  {
+   "id": "T2Z-6jYcP1o",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-09-13T16:39:42+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T12:59:31+00:00",
+   "title": "INSTRUMENTAL BATCH 1",
    "kind": "video"
   },
   {

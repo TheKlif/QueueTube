@@ -519,16 +519,23 @@
    "shorts": "hide",
    "live": "hide",
    "muted": false
-  }
- ],
- "pending": [
-  {
-   "input": "@grump",
-   "tier": 9
   },
   {
-   "input": "@the_willbr",
-   "tier": 10
+   "id": "UCozF7YgKlWOz2zB8pjK13Fg",
+   "name": "",
+   "tier": 9,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCBagziMbjtKR1zXUmI48LOw",
+   "name": "TheWillbr",
+   "tier": 10,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
   }
- ]
+ ],
+ "pending": []
 }
