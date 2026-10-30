@@ -18,6 +18,7 @@ h1{font-size:1.1rem;margin:0}
 .status{font-size:.8rem;color:var(--muted);text-align:right}
 .stale{color:var(--warn);font-weight:600}
 nav,#bar{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.5rem}
+#addbar{display:flex;gap:.4rem;margin-top:.5rem}
 .sp{flex:1}
 button,select,input[type=date]{font:inherit;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:.4rem;padding:.35rem .7rem;min-height:44px}
 button.tab.on{border-color:var(--accent);color:var(--accent);font-weight:600}
@@ -25,17 +26,18 @@ ul{list-style:none;margin:0;padding:0}
 .row{display:flex;gap:.6rem;align-items:center;padding:.5rem .8rem;border-bottom:1px solid var(--line)}
 .row .main{display:flex;gap:.6rem;flex:1;min-width:0;color:inherit;text-decoration:none}
 .row img{width:120px;aspect-ratio:16/9;object-fit:cover;background:var(--chip);border-radius:.3rem;flex:none}
-.title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:500}
+.title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:500;overflow-wrap:anywhere}
 .meta{font-size:.85rem;color:var(--muted);margin-top:.15rem}
 .badge{border:1px solid var(--muted);border-radius:.25rem;padding:0 .3rem;font-size:.7rem;margin-left:.3rem}
 .row input[type=checkbox]{width:1.4rem;height:1.4rem;flex:none}
 .check{min-width:44px;font-size:1.2rem}
 #empty{padding:2rem;text-align:center;color:var(--muted)}
+#note{margin:0;padding:.4rem .8rem;font-size:.85rem;color:var(--warn)}
 #settings{padding:.8rem;border-bottom:1px solid var(--line)}
 #settings h2{font-size:1rem;margin:0 0 .5rem}
 #settings p{margin:.4rem 0;font-size:.85rem;color:var(--muted)}
 #settings label{display:flex;gap:.5rem;align-items:center;margin:.4rem 0}
-#tok{flex:1;min-width:0;font:inherit;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:.4rem;padding:.35rem .7rem;min-height:44px}
+#tok,#addin{flex:1;min-width:0;font:inherit;color:var(--fg);background:var(--chip);border:1px solid var(--line);border-radius:.4rem;padding:.35rem .7rem;min-height:44px}
 code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1rem + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:.4rem .4rem .4rem 1rem;border-radius:.5rem;display:flex;align-items:center;gap:.8rem;z-index:10}
 #toast button{background:transparent;color:var(--bg);border-color:var(--bg)}
@@ -50,6 +52,7 @@ code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
   </div>
   <nav>
     <button id="tab-queue" class="tab on">Queue</button>
+    <button id="tab-later" class="tab">Later</button>
     <button id="tab-watched" class="tab">Watched</button>
     <span class="sp"></span>
     <button id="sort"></button>
@@ -57,6 +60,10 @@ code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
     <button id="refresh">Refresh</button>
     <button id="settingsbtn">Settings</button>
   </nav>
+  <div id="addbar" hidden>
+    <input id="addin" type="text" inputmode="url" placeholder="Paste a YouTube link" autocomplete="off">
+    <button id="addbtn">Add</button>
+  </div>
   <div id="bar" hidden>
     <span id="count">0 selected</span>
     <button id="markbtn">Mark watched</button>
@@ -77,6 +84,7 @@ code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
   <p id="settingsMsg"></p>
 </section>
 <main>
+  <p id="note" hidden></p>
   <ul id="list"></ul>
   <p id="empty" hidden></p>
 </main>
@@ -109,14 +117,18 @@ function loadState() {
 }
 
 let state = loadState();
+let later = store.get("qt.later", {});
 let token = store.get("qt.token", "");
 let tapMarks = store.get("qt.tapMarks", true);
 let newestFirst = store.get("qt.newestFirst", false);
 let view = "queue", selectMode = false, selected = new Set();
 let queue = null, chans = new Map(), toastTimer;
 let remoteSha = null, rev = 0, lastPull = 0, pushTimer = null, busy = false;
+let metaFailed = false;
+const metaTried = new Set();
 
 const isWatched = (id) => !!(state[id] && state[id].w);
+const dateOf = (v) => Date.parse(v.published || v.added);
 
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -135,13 +147,24 @@ function setStatus(s, msg) {
 
 /* ---------- sync ---------- */
 
-function mergeInto(remote) {
+function b64enc(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  return btoa(bin);
+}
+
+function b64dec(b64) {
+  const bin = atob(b64.replace(/\s/g, ""));
+  return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
+}
+
+function mergeMap(local, remote) {
   let changed = false;
   for (const id in remote) {
-    const r = remote[id], l = state[id];
-    if (!l || r.t > l.t) { state[id] = r; changed = true; }
+    const r = remote[id], l = local[id];
+    if (!l || r.t > l.t) { local[id] = r; changed = true; }
   }
-  if (changed) store.set("qt.state", state);
   return changed;
 }
 
@@ -163,8 +186,9 @@ async function pullRemote() {
   if (!r.ok) throw new Error("GitHub " + r.status);
   const j = await r.json();
   remoteSha = j.sha;
-  const data = JSON.parse(atob(j.content.replace(/\s/g, "")));
-  mergeInto(data.items || {});
+  const data = JSON.parse(b64dec(j.content));
+  if (mergeMap(state, data.items || {})) store.set("qt.state", state);
+  if (mergeMap(later, data.later || {})) store.set("qt.later", later);
 }
 
 async function pushRemote() {
@@ -172,7 +196,7 @@ async function pushRemote() {
     await pullRemote();
     const body = {
       message: "watched state",
-      content: btoa(JSON.stringify({ v: 1, items: state })),
+      content: b64enc(JSON.stringify({ v: 2, items: state, later: later })),
       branch: STATE_BRANCH
     };
     if (remoteSha) body.sha = remoteSha;
@@ -184,7 +208,8 @@ async function pushRemote() {
 }
 
 async function flush() {
-  if (!token || busy || !store.get("qt.dirty", false)) return;
+  if (!token || !store.get("qt.dirty", false)) return;
+  if (busy) { schedule(); return; }
   busy = true;
   const start = rev;
   setStatus("saving");
@@ -225,13 +250,103 @@ async function sync(force) {
   busy = false;
 }
 
+function markDirty() {
+  rev++;
+  store.set("qt.dirty", true);
+  schedule();
+}
+
 function setW(ids, w) {
   const now = Date.now();
   ids.forEach((id) => { state[id] = { t: now, w: w }; });
   store.set("qt.state", state);
-  rev++;
-  store.set("qt.dirty", true);
-  schedule();
+  markDirty();
+}
+
+/* ---------- watch later ---------- */
+
+function extractId(text) {
+  const t = String(text || "").trim();
+  if (/^[\w-]{11}$/.test(t)) return t;
+  let u;
+  try { u = new URL(t); } catch (e) { return null; }
+  const h = u.hostname.replace(/^(www|m|music)\./, "");
+  let id = null;
+  if (h === "youtu.be") {
+    id = u.pathname.slice(1).split("/")[0];
+  } else if (h === "youtube.com" || h === "youtube-nocookie.com") {
+    if (u.pathname === "/watch") {
+      id = u.searchParams.get("v");
+    } else {
+      const m = u.pathname.match(/^\/(?:shorts|live|embed|v)\/([\w-]{11})/);
+      if (m) id = m[1];
+    }
+  }
+  return id && /^[\w-]{11}$/.test(id) ? id : null;
+}
+
+function addLater(text) {
+  const id = extractId(text);
+  if (!id) { toast("Not a YouTube video link"); return false; }
+  const exists = !!later[id];
+  if (exists && !isWatched(id)) { toast("Already in Watch Later"); return false; }
+  const now = Date.now();
+  let title = exists ? later[id].title : null;
+  let channel = exists ? later[id].channel : null;
+  const qv = queue && queue.videos.find((v) => v.id === id);
+  if (qv && !title) {
+    title = qv.title;
+    const ch = chans.get(qv.channel_id);
+    channel = ch ? ch.name : channel;
+  }
+  later[id] = { added: now, title: title, channel: channel, t: now };
+  store.set("qt.later", later);
+  if (isWatched(id)) setW([id], 0); else markDirty();
+  render();
+  toast("Added to Watch Later");
+  fillMeta();
+  return true;
+}
+
+async function fetchMeta(id) {
+  const url = "https://www.youtube.com/oembed?format=json&url=" +
+    encodeURIComponent("https://www.youtube.com/watch?v=" + id);
+  const r = await fetch(url);
+  if (!r.ok) throw new Error("oembed " + r.status);
+  const j = await r.json();
+  return { title: j.title, channel: j.author_name };
+}
+
+async function fillMeta() {
+  for (const id of Object.keys(later)) {
+    const it = later[id];
+    if (it.title || metaTried.has(id)) continue;
+    metaTried.add(id);
+    try {
+      const m = await fetchMeta(id);
+      it.title = m.title;
+      it.channel = m.channel;
+      it.t = Date.now();
+      store.set("qt.later", later);
+      markDirty();
+    } catch (e) {
+      metaFailed = true;
+    }
+    render();
+  }
+}
+
+function laterEntry(id) {
+  const it = later[id];
+  return { id: id, kind: "later", title: it.title || "youtube.com/watch?v=" + id,
+           channelName: it.channel || "", added: new Date(it.added).toISOString() };
+}
+
+function laterItems() {
+  return Object.keys(later).filter((id) => !isWatched(id)).map(laterEntry).sort((a, b) => {
+    const d = Date.parse(a.added) - Date.parse(b.added);
+    return newestFirst ? -d : d;
+  });
 }
 
 /* ---------- data ---------- */
@@ -269,7 +384,16 @@ function visible() {
 }
 
 function watchedItems() {
-  return queue.videos.filter((v) => isWatched(v.id)).sort((a, b) => state[b.id].t - state[a.id].t);
+  const out = [], seen = new Set();
+  queue.videos.forEach((v) => { if (isWatched(v.id)) { out.push(v); seen.add(v.id); } });
+  Object.keys(later).forEach((id) => { if (isWatched(id) && !seen.has(id)) out.push(laterEntry(id)); });
+  return out.sort((a, b) => state[b.id].t - state[a.id].t);
+}
+
+function currentItems() {
+  if (view === "queue") return visible();
+  if (view === "later") return laterItems();
+  return watchedItems();
 }
 
 /* ---------- ui ---------- */
@@ -311,7 +435,7 @@ function row(v) {
   const ch = chans.get(v.channel_id);
   const li = el("li", "row");
   let cb = null;
-  if (selectMode && view === "queue") {
+  if (selectMode && view !== "watched") {
     cb = el("input");
     cb.type = "checkbox";
     cb.checked = selected.has(v.id);
@@ -324,7 +448,7 @@ function row(v) {
   if (NEW_TAB) a.target = "_blank";
   a.onclick = (e) => {
     if (cb) { e.preventDefault(); toggle(v.id, cb, !cb.checked); return; }
-    if (view === "queue" && tapMarks) {
+    if (view !== "watched" && tapMarks) {
       setW([v.id], 1);
       setTimeout(render, 150);
     }
@@ -336,16 +460,22 @@ function row(v) {
   img.referrerPolicy = "no-referrer";
   const text = el("div");
   text.append(el("div", "title", v.title));
-  const meta = el("div", "meta", (ch ? ch.name : "") + " · " + ago(v.published));
+  let metaText;
+  if (v.kind === "later") {
+    metaText = (v.channelName ? v.channelName + " · " : "") + "added " + ago(v.added);
+  } else {
+    metaText = (ch ? ch.name : "") + " · " + ago(v.published);
+  }
+  const meta = el("div", "meta", metaText);
   if (v.kind === "short") meta.append(el("span", "badge", "SHORT"));
   if (v.kind === "vod") meta.append(el("span", "badge", "VOD"));
   text.append(meta);
   a.append(img, text);
   li.append(a);
   if (!cb) {
-    const b = el("button", "check", view === "queue" ? "✓" : "Unwatch");
-    b.setAttribute("aria-label", view === "queue" ? "Mark watched" : "Unwatch");
-    b.onclick = () => (view === "queue" ? markWatched([v.id]) : unwatch(v.id));
+    const b = el("button", "check", view === "watched" ? "Unwatch" : "✓");
+    b.setAttribute("aria-label", view === "watched" ? "Unwatch" : "Mark watched");
+    b.onclick = () => (view === "watched" ? unwatch(v.id) : markWatched([v.id]));
     li.append(b);
   }
   return li;
@@ -353,46 +483,63 @@ function row(v) {
 
 function buildBar(items) {
   const bar = $("#bar");
-  bar.hidden = !(selectMode && view === "queue");
+  bar.hidden = !(selectMode && view !== "watched");
   if (bar.hidden) return;
   $("#count").textContent = selected.size + " selected";
+  const sel = $("#chsel");
+  sel.hidden = view !== "queue";
+  if (view !== "queue") return;
   const names = new Map();
   items.forEach((v) => names.set(v.channel_id, chans.get(v.channel_id).name || v.channel_id));
-  const sel = $("#chsel");
   sel.replaceChildren(new Option("Select channel…", ""));
   [...names].sort((a, b) => a[1].localeCompare(b[1])).forEach(([id, n]) => sel.append(new Option(n, id)));
 }
 
 function render() {
   if (!queue) return;
-  const q = visible();
-  const items = view === "queue" ? q : watchedItems();
+  const q = visible(), l = laterItems();
+  const items = view === "queue" ? q : view === "later" ? l : watchedItems();
   $("#tab-queue").textContent = "Queue (" + q.length + ")";
+  $("#tab-later").textContent = "Later (" + l.length + ")";
   $("#tab-queue").classList.toggle("on", view === "queue");
+  $("#tab-later").classList.toggle("on", view === "later");
   $("#tab-watched").classList.toggle("on", view === "watched");
   $("#sort").textContent = newestFirst ? "Newest first" : "Oldest first";
   $("#select").textContent = selectMode ? "Cancel" : "Select";
-  $("#select").hidden = view !== "queue";
+  $("#select").hidden = view === "watched";
+  $("#addbar").hidden = view !== "later";
+  const note = $("#note");
+  note.hidden = !(view === "later" && metaFailed && l.some((v) => !later[v.id].title));
+  note.textContent = "Titles could not be fetched (the browser blocked the lookup).";
   const mins = Math.round((Date.now() - Date.parse(queue.generated_at)) / 60000);
   const u = $("#updated");
   u.textContent = "Updated " + (mins < 60 ? mins + " min" : Math.round(mins / 60) + " h") + " ago";
   u.className = mins > STALE_HOURS * 60 ? "stale" : "";
-  buildBar(q);
+  buildBar(items);
   $("#list").replaceChildren(...items.map(row));
   const empty = $("#empty");
   empty.hidden = items.length > 0;
-  empty.textContent = view === "queue" ? "Nothing to watch." : "Nothing watched yet.";
+  empty.textContent = view === "queue" ? "Nothing to watch."
+    : view === "later" ? "Watch Later is empty." : "Nothing watched yet.";
 }
 
 function selectWhere(fn) {
-  visible().filter(fn).forEach((v) => selected.add(v.id));
+  currentItems().filter(fn).forEach((v) => selected.add(v.id));
+  render();
+}
+
+function setView(v) {
+  view = v;
+  selectMode = false;
+  selected.clear();
   render();
 }
 
 /* ---------- events ---------- */
 
-$("#tab-queue").onclick = () => { view = "queue"; render(); };
-$("#tab-watched").onclick = () => { view = "watched"; selectMode = false; selected.clear(); render(); };
+$("#tab-queue").onclick = () => setView("queue");
+$("#tab-later").onclick = () => setView("later");
+$("#tab-watched").onclick = () => setView("watched");
 $("#sort").onclick = () => { newestFirst = !newestFirst; store.set("qt.newestFirst", newestFirst); render(); };
 $("#select").onclick = () => { selectMode = !selectMode; selected.clear(); render(); };
 $("#selall").onclick = () => selectWhere(() => true);
@@ -400,7 +547,7 @@ $("#chsel").onchange = (e) => { if (e.target.value) selectWhere((v) => v.channel
 $("#olderdate").onchange = (e) => {
   if (!e.target.value) return;
   const cutoff = new Date(e.target.value + "T00:00:00").getTime();
-  selectWhere((v) => Date.parse(v.published) < cutoff);
+  selectWhere((v) => dateOf(v) < cutoff);
   e.target.value = "";
 };
 $("#markbtn").onclick = () => {
@@ -416,6 +563,9 @@ $("#refresh").onclick = async () => {
   try { await load(); render(); await sync(true); } catch (e) { toast("Refresh failed: " + e.message); }
 };
 
+$("#addbtn").onclick = () => { if (addLater($("#addin").value)) $("#addin").value = ""; };
+$("#addin").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#addbtn").click(); });
+
 $("#settingsbtn").onclick = () => { $("#settings").hidden = !$("#settings").hidden; };
 $("#tapmarks").checked = tapMarks;
 $("#tapmarks").onchange = (e) => { tapMarks = e.target.checked; store.set("qt.tapMarks", tapMarks); };
@@ -430,8 +580,8 @@ $("#tokSave").onclick = async () => {
   try {
     await pullRemote();
     store.set("qt.token", token);
-    store.set("qt.dirty", true);
     rev++;
+    store.set("qt.dirty", true);
     $("#tok").value = "";
     await flush();
     msg.textContent = store.get("qt.dirty", false) ? "Token saved, but the first sync failed." : "Connected and synced.";
@@ -452,12 +602,26 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") sync(false); else flush();
 });
 
+/* ---------- startup ---------- */
+
 setStatus(token ? "idle" : "local");
-load().then(render).catch((e) => {
-  $("#empty").hidden = false;
-  $("#empty").textContent = "Could not load data: " + e.message;
-});
-sync(true);
+const startAdd = new URLSearchParams(location.search).get("add");
+if (startAdd) {
+  history.replaceState(null, "", location.pathname + location.hash);
+  view = "later";
+}
+(async () => {
+  try {
+    await load();
+    render();
+  } catch (e) {
+    $("#empty").hidden = false;
+    $("#empty").textContent = "Could not load data: " + e.message;
+  }
+  await sync(true);
+  if (startAdd) addLater(startAdd);
+  fillMeta();
+})();
 </script>
 </body>
 </html>
