@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-30T22:59:53+00:00",
+ "generated_at": "2026-10-31T02:26:14+00:00",
  "videos": [
   {
    "id": "s6liqS8PTF8",
@@ -113,7 +113,7 @@
    "id": "D1hNjSdURio",
    "channel_id": "UCDrJor35jYVnuC3JgRzheIw",
    "published": "2026-10-30T15:09:02+00:00",
-   "state": "hold",
+   "state": "ready",
    "first_seen": "2026-10-30T18:38:35+00:00",
    "title": "STREAM of SCREAMS: The Final Friday",
    "kind": "vod"
