@@ -1,6 +1,69 @@
 {
- "generated_at": "2026-10-31T02:26:14+00:00",
+ "generated_at": "2026-10-31T09:42:24+00:00",
  "videos": [
+  {
+   "id": "AegJhle774A",
+   "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
+   "published": "2026-10-31T03:56:25+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-31T09:42:24+00:00",
+   "title": "What soup are yall having this season? @mummtscloset #soupseason #joke #lol",
+   "kind": "short"
+  },
+  {
+   "id": "aa8VYbUcP1U",
+   "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
+   "published": "2026-10-31T02:43:23+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-31T09:42:24+00:00",
+   "title": "Not just for eating on your next camping trip #doritos #cheetos #calories",
+   "kind": "short"
+  },
+  {
+   "id": "D1hNjSdURio",
+   "channel_id": "UCDrJor35jYVnuC3JgRzheIw",
+   "published": "2026-10-31T01:56:18+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-30T18:38:35+00:00",
+   "title": "STREAM of SCREAMS: The Final Friday",
+   "kind": "vod"
+  },
+  {
+   "id": "0D-34yQ3MoA",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-31T01:52:26+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-31T09:42:24+00:00",
+   "title": "[marathon teaser] Pangaguros Swing",
+   "kind": "video"
+  },
+  {
+   "id": "tVWWTrL4pNg",
+   "channel_id": "UCBagziMbjtKR1zXUmI48LOw",
+   "published": "2026-10-31T01:52:18+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-31T09:42:24+00:00",
+   "title": "I was bored and made a menu theme",
+   "kind": "video"
+  },
+  {
+   "id": "XkhVJQm-U9A",
+   "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
+   "published": "2026-10-31T01:48:16+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-31T09:42:24+00:00",
+   "title": "Not satisfying a cookie craving but better than I expected @thewashingtonpost #fiber #cookie",
+   "kind": "short"
+  },
+  {
+   "id": "Lz-XZJ--q1k",
+   "channel_id": "UCOT2iLov0V7Re7ku_3UBtcQ",
+   "published": "2026-10-31T00:05:29+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-31T09:42:24+00:00",
+   "title": "Why Halloween is the Best American Holiday",
+   "kind": "video"
+  },
   {
    "id": "s6liqS8PTF8",
    "channel_id": "UCqqJQ_cXSat0KIAVfIfKkVA",
@@ -108,15 +171,6 @@
    "first_seen": "2026-10-30T18:38:35+00:00",
    "title": "easy whimsy for halloween?! #halloween #pumpkin #shorts",
    "kind": "short"
-  },
-  {
-   "id": "D1hNjSdURio",
-   "channel_id": "UCDrJor35jYVnuC3JgRzheIw",
-   "published": "2026-10-30T15:09:02+00:00",
-   "state": "ready",
-   "first_seen": "2026-10-30T18:38:35+00:00",
-   "title": "STREAM of SCREAMS: The Final Friday",
-   "kind": "vod"
   },
   {
    "id": "tKWr6DcHaGU",
@@ -268,7 +322,7 @@
    "published": "2026-10-29T17:49:01+00:00",
    "state": "ready",
    "first_seen": "2026-10-29T18:30:09+00:00",
-   "title": "1 River, 4 Days, 25 Guests, No Refrigeration | Cooking on the River",
+   "title": "Cooking on the River: Episode 1 | Our Trip to the Moab Music Festival",
    "kind": "video"
   },
   {
@@ -1006,7 +1060,7 @@
    "published": "2026-10-23T18:00:09+00:00",
    "state": "ready",
    "first_seen": "2026-10-29T11:48:11+00:00",
-   "title": "Who decides what NASCAR fans hear?",
+   "title": "Inside NASCAR's Chaotic Radio Control Room",
    "kind": "video"
   },
   {
