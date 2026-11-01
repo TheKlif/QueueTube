@@ -1,11 +1,47 @@
 {
- "generated_at": "2026-11-01T18:57:30+00:00",
+ "generated_at": "2026-11-01T22:51:10+00:00",
  "videos": [
+  {
+   "id": "VNLUyxhSl_E",
+   "channel_id": "UCXgxNzAgZ1GExhTW4X1mUrg",
+   "published": "2026-11-01T22:43:00+00:00",
+   "state": "ready",
+   "first_seen": "2026-10-31T20:00:15+00:00",
+   "title": "WE OUTSIDE: EPISODE 3",
+   "kind": "vod"
+  },
+  {
+   "id": "dqM66el5TU8",
+   "channel_id": "UCOZnlN6M4FVIm0_fbrEjUYQ",
+   "published": "2026-11-01T20:51:18+00:00",
+   "state": "ready",
+   "first_seen": "2026-11-01T22:51:10+00:00",
+   "title": "Can I find this Neighborhood? - Geolocation S4E140",
+   "kind": "video"
+  },
+  {
+   "id": "crUrpA5ARSY",
+   "channel_id": "UCxC7i8o5gFBz7_c9RUGjyrg",
+   "published": "2026-11-01T19:03:40+00:00",
+   "state": "ready",
+   "first_seen": "2026-11-01T22:51:10+00:00",
+   "title": "Round 3 went quick @kalshi_markets #kalshipartner",
+   "kind": "short"
+  },
+  {
+   "id": "kxZsBjO0pS0",
+   "channel_id": "UCx9l0FfNQ3G79_9SBxkhR9g",
+   "published": "2026-11-01T19:00:39+00:00",
+   "state": "ready",
+   "first_seen": "2026-11-01T22:51:10+00:00",
+   "title": "Taskmaster Portugal Season 1, Episode 4 - 'Na vida, nem tudo é força.'",
+   "kind": "video"
+  },
   {
    "id": "dkVVNhnCG8Q",
    "channel_id": "UCJLKwTg0IaSMoq6hLHT3CAA",
    "published": "2026-11-01T18:15:16+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T18:57:30+00:00",
    "title": "Deep Fried Pot Pie",
    "kind": "video"
@@ -14,7 +50,7 @@
    "id": "htAdma35sw4",
    "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
    "published": "2026-11-01T18:03:52+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T18:57:30+00:00",
    "title": "April and I are creaming over how good these possets are #bbpartner",
    "kind": "short"
@@ -23,7 +59,7 @@
    "id": "67sXo1J5m3M",
    "channel_id": "UCJ2ZDzMRgSrxmwphstrm8Ww",
    "published": "2026-11-01T18:00:07+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T18:57:30+00:00",
    "title": "Don't Have A Cow | Board AF: Herd Mentality",
    "kind": "video"
@@ -32,7 +68,7 @@
    "id": "jHK0ApGs_1w",
    "channel_id": "UC9CuvdOVfMPvKCiwdGKL3cQ",
    "published": "2026-11-01T18:00:04+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T18:57:30+00:00",
    "title": "That's how you get ANTS, MINNIE! | Kingdom Hearts 2 [10]",
    "kind": "video"
@@ -41,7 +77,7 @@
    "id": "-fUtjJkdRHA",
    "channel_id": "UCT5C7yaO3RVuOgwP8JVAujQ",
    "published": "2026-11-01T16:00:16+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T18:57:30+00:00",
    "title": "Home is where the printer is. #outtake #taskmaster",
    "kind": "short"
@@ -50,7 +86,7 @@
    "id": "yTohZC8TEHw",
    "channel_id": "UCqqJQ_cXSat0KIAVfIfKkVA",
    "published": "2026-11-01T16:00:03+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T18:57:30+00:00",
    "title": "Introducing Cooking on the River",
    "kind": "short"
@@ -59,7 +95,7 @@
    "id": "mDYU4ZHT_LM",
    "channel_id": "UCKoQPVYSFJt5HFvyKzkFtNg",
    "published": "2026-11-01T03:56:23+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T13:29:00+00:00",
    "title": "Happy Halloween everyone, don’t get jockeyed like Andrew",
    "kind": "short"
@@ -68,7 +104,7 @@
    "id": "1JdL3T2R6mY",
    "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
    "published": "2026-11-01T01:01:18+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T13:29:00+00:00",
    "title": "It does have a nice ring to it 😅 #melamine #plates #plastic",
    "kind": "short"
@@ -77,7 +113,7 @@
    "id": "pYMiybNr3vU",
    "channel_id": "UCUK0HBIBWgM2c4vsPhkYY4w",
    "published": "2026-10-31T22:31:53+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T13:29:00+00:00",
    "title": "10 Billion Sparks per Hour - The Slow Mo Guys",
    "kind": "video"
@@ -86,7 +122,7 @@
    "id": "PDQFWLKFnVI",
    "channel_id": "UCnZx--LpG2spgmlxOcC-DRA",
    "published": "2026-10-31T21:42:24+00:00",
-   "state": "check",
+   "state": "ready",
    "first_seen": "2026-11-01T13:29:00+00:00",
    "title": "When you accidentally write melodies that already exist",
    "kind": "video"
@@ -171,15 +207,6 @@
    "first_seen": "2026-10-31T20:00:15+00:00",
    "title": "A deep dive into Alex's iPad. #outtake #taskmaster",
    "kind": "short"
-  },
-  {
-   "id": "VNLUyxhSl_E",
-   "channel_id": "UCXgxNzAgZ1GExhTW4X1mUrg",
-   "published": "2026-10-31T15:53:40+00:00",
-   "state": "hold",
-   "first_seen": "2026-10-31T20:00:15+00:00",
-   "title": "WE OUTSIDE: EPISODE 3",
-   "kind": "vod"
   },
   {
    "id": "7BSb0GEQiZU",
