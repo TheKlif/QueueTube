@@ -355,18 +355,32 @@ function addLater(text) {
 
 function addLaterMany(text) {
   const tokens = String(text || "").split(/\s+/).filter(Boolean);
-  if (tokens.length < 2) return addLater(text);
+  const entries = [];
+  tokens.forEach((tk) => {
+    if (/^\d{4}-\d{2}-\d{2}/.test(tk) && entries.length) {
+      const ts = Date.parse(tk);
+      if (!Number.isNaN(ts)) entries[entries.length - 1].ts = ts;
+      return;
+    }
+    entries.push({ id: extractId(tk), ts: null });
+  });
+  if (entries.length < 2 && !(entries[0] && entries[0].ts !== null)) return addLater(text);
   const base = Date.now();
-  let added = 0, skipped = 0;
-  tokens.forEach((tk, i) => {
-    const id = extractId(tk);
-    if (!id || (later[id] && !isWatched(id))) { skipped++; return; }
+  let added = 0, updated = 0, skipped = 0;
+  entries.forEach((p, i) => {
+    const id = p.id;
+    if (!id) { skipped++; return; }
     const prev = later[id];
+    const t = base + i;
+    if (prev && p.ts !== null) {
+      if (prev.added !== p.ts) { prev.added = p.ts; prev.t = t; updated++; } else { skipped++; }
+      return;
+    }
+    if (prev && !isWatched(id)) { skipped++; return; }
     const qv = queue && queue.videos.find((v) => v.id === id);
     const ch = qv ? chans.get(qv.channel_id) : null;
-    const t = base + i;
     later[id] = {
-      added: t,
+      added: p.ts !== null ? p.ts : t,
       title: prev ? prev.title : (qv ? qv.title : null),
       channel: prev ? prev.channel : (ch ? ch.name : null),
       t: t
@@ -376,11 +390,12 @@ function addLaterMany(text) {
   });
   store.set("qt.later", later);
   store.set("qt.state", state);
-  if (added) markDirty();
+  if (added || updated) markDirty();
   render();
-  toast(added + " added" + (skipped ? ", " + skipped + " skipped" : ""));
+  toast(added + " added" + (updated ? ", " + updated + " dates updated" : "") +
+    (skipped ? ", " + skipped + " skipped" : ""));
   fillMeta();
-  return added > 0;
+  return added > 0 || updated > 0;
 }
 
 async function fetchMeta(id) {
