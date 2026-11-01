@@ -1,6 +1,60 @@
 {
- "generated_at": "2026-11-01T13:29:00+00:00",
+ "generated_at": "2026-11-01T18:57:30+00:00",
  "videos": [
+  {
+   "id": "dkVVNhnCG8Q",
+   "channel_id": "UCJLKwTg0IaSMoq6hLHT3CAA",
+   "published": "2026-11-01T18:15:16+00:00",
+   "state": "check",
+   "first_seen": "2026-11-01T18:57:30+00:00",
+   "title": "Deep Fried Pot Pie",
+   "kind": "video"
+  },
+  {
+   "id": "htAdma35sw4",
+   "channel_id": "UCEMj2h7pP4QWkoGnSmaiiYw",
+   "published": "2026-11-01T18:03:52+00:00",
+   "state": "check",
+   "first_seen": "2026-11-01T18:57:30+00:00",
+   "title": "April and I are creaming over how good these possets are #bbpartner",
+   "kind": "short"
+  },
+  {
+   "id": "67sXo1J5m3M",
+   "channel_id": "UCJ2ZDzMRgSrxmwphstrm8Ww",
+   "published": "2026-11-01T18:00:07+00:00",
+   "state": "check",
+   "first_seen": "2026-11-01T18:57:30+00:00",
+   "title": "Don't Have A Cow | Board AF: Herd Mentality",
+   "kind": "video"
+  },
+  {
+   "id": "jHK0ApGs_1w",
+   "channel_id": "UC9CuvdOVfMPvKCiwdGKL3cQ",
+   "published": "2026-11-01T18:00:04+00:00",
+   "state": "check",
+   "first_seen": "2026-11-01T18:57:30+00:00",
+   "title": "That's how you get ANTS, MINNIE! | Kingdom Hearts 2 [10]",
+   "kind": "video"
+  },
+  {
+   "id": "-fUtjJkdRHA",
+   "channel_id": "UCT5C7yaO3RVuOgwP8JVAujQ",
+   "published": "2026-11-01T16:00:16+00:00",
+   "state": "check",
+   "first_seen": "2026-11-01T18:57:30+00:00",
+   "title": "Home is where the printer is. #outtake #taskmaster",
+   "kind": "short"
+  },
+  {
+   "id": "yTohZC8TEHw",
+   "channel_id": "UCqqJQ_cXSat0KIAVfIfKkVA",
+   "published": "2026-11-01T16:00:03+00:00",
+   "state": "check",
+   "first_seen": "2026-11-01T18:57:30+00:00",
+   "title": "Introducing Cooking on the River",
+   "kind": "short"
+  },
   {
    "id": "mDYU4ZHT_LM",
    "channel_id": "UCKoQPVYSFJt5HFvyKzkFtNg",
@@ -475,7 +529,7 @@
    "published": "2026-10-29T18:20:35+00:00",
    "state": "ready",
    "first_seen": "2026-10-29T18:30:09+00:00",
-   "title": "Why is Everyone Still Wrong about Fiber???",
+   "title": "I Was Wrong About Fiber",
    "kind": "video"
   },
   {
@@ -6262,7 +6316,7 @@
    "published": "2026-08-12T22:12:09+00:00",
    "state": "ready",
    "first_seen": "2026-10-29T11:48:11+00:00",
-   "title": "🦇 GRUMPS TV but Ghoulish 👻",
+   "title": "📺It's 24/7 Grumps TV 📺",
    "kind": "vod"
   },
   {
