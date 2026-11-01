@@ -756,13 +756,10 @@ function row(v) {
   img.referrerPolicy = "no-referrer";
   const text = el("div");
   text.append(el("div", "title", v.title));
-  let metaText;
-  if (v.kind === "later") {
-    metaText = (v.channelName ? v.channelName + " · " : "") + "added " + ago(v.added);
-  } else {
-    metaText = (ch ? ch.name : "") + " · " + ago(v.published);
-  }
-  const meta = el("div", "meta", metaText);
+  const chanName = v.kind === "later" ? (v.channelName || "") : (ch ? ch.name : "");
+  const ageText = v.kind === "later" ? "added " + ago(v.added) : ago(v.published);
+  if (chanName) text.append(el("div", "meta", chanName));
+  const meta = el("div", "meta", ageText);
   if (v.kind === "short") meta.append(el("span", "badge", "SHORT"));
   if (v.kind === "vod") meta.append(el("span", "badge", "VOD"));
   if (v.kind === "later" && view === "queue") meta.append(el("span", "badge", "LATER"));
