@@ -89,7 +89,7 @@ code{background:var(--chip);padding:0 .25rem;border-radius:.2rem}
 </header>
 <section id="settings" hidden>
   <h2>Settings</h2>
-  <label><input type="checkbox" id="tapmarks"> Tapping a video marks it watched</label>
+  <label><input type="checkbox" id="tapmarks"> Tapping a video moves it to the front of the queue</label>
   <label>Show Watch Later in the Queue at tier <select id="latertier"></select></label>
   <p>Sync target: <code id="slug"></code>, branch <code>state</code>. Needs a fine-grained token with Contents read and write on this repo only.</p>
   <label>Token <input type="password" id="tok" autocomplete="off" placeholder="paste token"></label>
@@ -148,7 +148,7 @@ let state = loadState();
 let later = store.get("qt.later", {});
 let prefs = store.get("qt.prefs", { laterTier: 0, t: 0 });
 let token = store.get("qt.token", "");
-let tapMarks = store.get("qt.tapMarks", true);
+let tapStarts = store.get("qt.tapStarts", true);
 let newestFirst = store.get("qt.newestFirst", false);
 let view = "queue", selectMode = false, selected = new Set(), selOnly = false;
 let queue = null, chans = new Map(), toastTimer;
@@ -301,6 +301,15 @@ function setW(ids, w) {
   markDirty();
 }
 
+const startedAt = (id) => (state[id] && !state[id].w && state[id].s) || 0;
+
+function setStarted(id) {
+  const now = Date.now();
+  state[id] = { t: now, w: 0, s: now };
+  store.set("qt.state", state);
+  markDirty();
+}
+
 function setPref(n) {
   prefs = { laterTier: n, t: Date.now() };
   store.set("qt.prefs", prefs);
@@ -434,6 +443,8 @@ function laterEntry(id) {
 
 function laterItems() {
   return Object.keys(later).filter((id) => !isWatched(id)).map(laterEntry).sort((a, b) => {
+    const sa = startedAt(a.id), sb = startedAt(b.id);
+    if (sa || sb) return !sa ? 1 : !sb ? -1 : sb - sa;
     const d = Date.parse(a.added) - Date.parse(b.added);
     return newestFirst ? -d : d;
   });
@@ -669,6 +680,8 @@ function visible() {
     laterItems().forEach((it) => { if (!have.has(it.id)) out.push(it); });
   }
   return out.sort((a, b) => {
+    const sa = startedAt(a.id), sb = startedAt(b.id);
+    if (sa || sb) return !sa ? 1 : !sb ? -1 : sb - sa;
     const ta = tierOf(a), tb = tierOf(b);
     if (ta !== tb) return ta - tb;
     const d = dateOf(a) - dateOf(b);
@@ -705,10 +718,14 @@ function toast(msg, undo) {
 }
 
 function markWatched(ids) {
+  const before = ids.map((id) => (state[id] ? Object.assign({}, state[id]) : null));
   setW(ids, 1);
   render();
   toast(ids.length + (ids.length === 1 ? " video" : " videos") + " marked watched", () => {
-    setW(ids, 0);
+    const now = Date.now();
+    ids.forEach((id, i) => { state[id] = Object.assign({}, before[i] || {}, { t: now, w: 0 }); });
+    store.set("qt.state", state);
+    markDirty();
     render();
   });
 }
@@ -744,8 +761,8 @@ function row(v) {
   if (NEW_TAB) a.target = "_blank";
   a.onclick = (e) => {
     if (cb) { e.preventDefault(); toggle(v.id, cb, !cb.checked); return; }
-    if (view !== "watched" && tapMarks) {
-      setW([v.id], 1);
+    if (view !== "watched" && tapStarts) {
+      setStarted(v.id);
       setTimeout(render, 150);
     }
   };
@@ -763,6 +780,7 @@ function row(v) {
   if (v.kind === "short") meta.append(el("span", "badge", "SHORT"));
   if (v.kind === "vod") meta.append(el("span", "badge", "VOD"));
   if (v.kind === "later" && view === "queue") meta.append(el("span", "badge", "LATER"));
+  if (startedAt(v.id)) meta.append(el("span", "badge", "IN PROGRESS"));
   text.append(meta);
   a.append(img, text);
   li.append(a);
@@ -894,8 +912,8 @@ TIERS.forEach(([v, t]) => $("#chtier").append(new Option(t, v)));
 $("#chtier").value = String(store.get("qt.addTier", 9));
 
 $("#settingsbtn").onclick = () => { $("#settings").hidden = !$("#settings").hidden; };
-$("#tapmarks").checked = tapMarks;
-$("#tapmarks").onchange = (e) => { tapMarks = e.target.checked; store.set("qt.tapMarks", tapMarks); };
+$("#tapmarks").checked = tapStarts;
+$("#tapmarks").onchange = (e) => { tapStarts = e.target.checked; store.set("qt.tapStarts", tapStarts); };
 [["0", "Off (Later tab only)"], ...TIERS].forEach(([v, t]) => $("#latertier").append(new Option(t, v)));
 $("#latertier").value = String(prefs.laterTier);
 $("#latertier").onchange = (e) => setPref(Number(e.target.value));
