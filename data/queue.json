@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-06T21:31:05+00:00",
+ "generated_at": "2026-11-07T01:57:26+00:00",
  "videos": [
   {
    "id": "Fz9vY4DVCQ8",
@@ -59,7 +59,7 @@
    "id": "SM3e-j8nlHU",
    "channel_id": "UC9CuvdOVfMPvKCiwdGKL3cQ",
    "published": "2026-11-06T18:00:07+00:00",
-   "state": "hold",
+   "state": "ready",
    "first_seen": "2026-11-06T21:31:05+00:00",
    "title": "Super Mario Galaxy | Game Grumps [FULL PLAYTHROUGH]",
    "kind": "video"
