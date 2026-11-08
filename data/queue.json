@@ -1,6 +1,33 @@
 {
- "generated_at": "2026-11-08T18:50:46+00:00",
+ "generated_at": "2026-11-08T22:54:51+00:00",
  "videos": [
+  {
+   "id": "015vFO5SbPs",
+   "channel_id": "UCXgxNzAgZ1GExhTW4X1mUrg",
+   "published": "2026-11-08T20:35:10+00:00",
+   "state": "ready",
+   "first_seen": "2026-11-08T13:29:01+00:00",
+   "title": "SWEET LITTLE SUNDAY STREAM",
+   "kind": "vod"
+  },
+  {
+   "id": "3Ae0gNYzaSQ",
+   "channel_id": "UCsvn_Po0SmunchJYOWpOxMg",
+   "published": "2026-11-08T20:30:27+00:00",
+   "state": "ready",
+   "first_seen": "2026-11-08T22:54:51+00:00",
+   "title": "The Legend of Zelda: Ocarina of Time",
+   "kind": "video"
+  },
+  {
+   "id": "r-iK6nH4JDE",
+   "channel_id": "UC9CuvdOVfMPvKCiwdGKL3cQ",
+   "published": "2026-11-08T19:00:07+00:00",
+   "state": "ready",
+   "first_seen": "2026-11-08T22:54:51+00:00",
+   "title": "Things are getting... glitchy",
+   "kind": "short"
+  },
   {
    "id": "uw-lnGR7B7A",
    "channel_id": "UCJLKwTg0IaSMoq6hLHT3CAA",
@@ -99,15 +126,6 @@
    "first_seen": "2026-11-08T13:29:01+00:00",
    "title": "Forbidden (remix) teaser",
    "kind": "video"
-  },
-  {
-   "id": "015vFO5SbPs",
-   "channel_id": "UCXgxNzAgZ1GExhTW4X1mUrg",
-   "published": "2026-11-07T21:42:33+00:00",
-   "state": "ready",
-   "first_seen": "2026-11-08T13:29:01+00:00",
-   "title": "SWEET LITTLE SUNDAY STREAM",
-   "kind": "vod"
   },
   {
    "id": "BsmvsfKsqdQ",
@@ -385,7 +403,7 @@
    "published": "2026-11-06T14:13:39+00:00",
    "state": "ready",
    "first_seen": "2026-11-06T15:56:44+00:00",
-   "title": "you know the scream but not its story",
+   "title": "you've heard the scream but not its story",
    "kind": "video"
   },
   {
