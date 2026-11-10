@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-10T04:38:22+00:00",
+ "generated_at": "2026-11-10T13:29:49+00:00",
  "videos": [
   {
    "id": "wT0HlwAONWM",
@@ -20,13 +20,22 @@
    "kind": "short"
   },
   {
+   "id": "WiSzDZNnbZ8",
+   "channel_id": "UCPP6JksBPYY3MeFQn5yanIw",
+   "published": "2026-11-10T01:33:36+00:00",
+   "state": "ready",
+   "first_seen": "2026-11-10T13:29:49+00:00",
+   "title": "Would you take the 1 million dollars?",
+   "kind": "short"
+  },
+  {
    "id": "bQiJ5uirBE4",
    "channel_id": "UCXq2nALoSbxLMehAvYTxt_A",
    "published": "2026-11-09T23:30:24+00:00",
    "state": "ready",
    "first_seen": "2026-11-10T04:38:22+00:00",
    "title": "How many kidney beans can we take?",
-   "kind": "video"
+   "kind": "short"
   },
   {
    "id": "dn2wDjyu1y4",
