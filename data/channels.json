@@ -549,6 +549,18 @@
   {
    "input": "@the_slow_mo_guys_2",
    "tier": 10
+  },
+  {
+   "input": "@bonus_regulation_stream_VODs",
+   "tier": 10
+  },
+  {
+   "input": "@ahoy",
+   "tier": 10
+  },
+  {
+   "input": "@smosh_games",
+   "tier": 10
   }
  ]
 }
