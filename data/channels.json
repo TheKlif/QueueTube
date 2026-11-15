@@ -561,6 +561,10 @@
   {
    "input": "@smosh_games",
    "tier": 10
+  },
+  {
+   "input": "@regulation_unlisted_twitch_playlist",
+   "tier": 10
   }
  ]
 }
