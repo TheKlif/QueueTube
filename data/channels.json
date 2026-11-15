@@ -565,6 +565,10 @@
   {
    "input": "@regulation_unlisted_twitch_playlist",
    "tier": 10
+  },
+  {
+   "input": "@synthdos",
+   "tier": 10
   }
  ]
 }
