@@ -541,6 +541,10 @@
   {
    "input": "@synthou",
    "tier": 10
+  },
+  {
+   "input": "@summoning_alt",
+   "tier": 10
   }
  ]
 }
