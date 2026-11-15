@@ -545,6 +545,10 @@
   {
    "input": "@summoning_alt",
    "tier": 10
+  },
+  {
+   "input": "@the_slow_mo_guys_2",
+   "tier": 10
   }
  ]
 }
