@@ -537,5 +537,10 @@
    "muted": false
   }
  ],
- "pending": []
+ "pending": [
+  {
+   "input": "@synthou",
+   "tier": 10
+  }
+ ]
 }
