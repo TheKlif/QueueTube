@@ -535,13 +535,33 @@
    "shorts": "hide",
    "live": "hide",
    "muted": false
+  },
+  {
+   "id": "UCFhflNdXJAwWL7U9Ln4sMFQ",
+   "name": "",
+   "tier": 10,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCJtSWV6KYyIckRpM5h20J_g",
+   "name": "",
+   "tier": 10,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
+  },
+  {
+   "id": "UCgX9My377M927Cd5mDtKW4A",
+   "name": "",
+   "tier": 10,
+   "shorts": "hide",
+   "live": "hide",
+   "muted": false
   }
  ],
  "pending": [
-  {
-   "input": "@synthou",
-   "tier": 10
-  },
   {
    "input": "@summoning_alt",
    "tier": 10
@@ -555,19 +575,11 @@
    "tier": 10
   },
   {
-   "input": "@ahoy",
-   "tier": 10
-  },
-  {
    "input": "@smosh_games",
    "tier": 10
   },
   {
    "input": "@regulation_unlisted_twitch_playlist",
-   "tier": 10
-  },
-  {
-   "input": "@synthdos",
    "tier": 10
   }
  ]
