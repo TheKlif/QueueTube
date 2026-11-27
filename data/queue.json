@@ -1,6 +1,15 @@
 {
- "generated_at": "2026-11-26T19:38:14+00:00",
+ "generated_at": "2026-11-27T02:52:44+00:00",
  "videos": [
+  {
+   "id": "Y1Yawp8pwmI",
+   "channel_id": "UCx9l0FfNQ3G79_9SBxkhR9g",
+   "published": "2026-11-26T21:00:00+00:00",
+   "state": "check",
+   "first_seen": "2026-11-27T02:52:44+00:00",
+   "title": "Taskmaster French Canada (Le Maître du jeu), Season 1, Episode 10 - 'Christoeuf Coulant.'",
+   "kind": "video"
+  },
   {
    "id": "K147QXAnl3k",
    "channel_id": "UC9CuvdOVfMPvKCiwdGKL3cQ",
@@ -421,7 +430,7 @@
    "published": "2026-11-24T13:59:07+00:00",
    "state": "ready",
    "first_seen": "2026-11-24T21:15:25+00:00",
-   "title": "the best synth is a singing cat",
+   "title": "the best synth of all time is a singing cat",
    "kind": "video"
   },
   {
